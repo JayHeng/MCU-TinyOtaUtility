@@ -9,7 +9,8 @@ from . import uivar
 g_exeTopRoot = None
 g_hasSubWinBeenOpened = False
 g_cfgFilename = None
-g_toolCommDict = {'mcuDevice':None
+g_toolCommDict = {'mcuDevice':None,
+                  'isUsbhidPortSelected':None,
                  }
 
 def initVar(cfgFilename):
@@ -27,7 +28,8 @@ def initVar(cfgFilename):
 
         g_toolCommDict = cfgDict["cfgToolCommon"][0]
     else:
-        g_toolCommDict = {'mcuDevice':0
+        g_toolCommDict = {'mcuDevice':0,
+                          'isUsbhidPortSelected':True,
                          }
 
 def deinitVar(cfgFilename=None):

@@ -72,6 +72,10 @@ class tinyOtaRun(uicore.tinyOtaUi):
     def createMcuTarget( self ):
         self.tgt, self.cpuDir = createTarget(self.mcuDevice, self.exeBinRoot)
 
+    def getUsbid( self ):
+        self.createMcuTarget()
+        return [self.tgt.romUsbVid, self.tgt.romUsbPid, self.tgt.flashloaderUsbVid, self.tgt.flashloaderUsbPid]
+
     def connectToDevice( self ):
         # Create the target object.
         self.createMcuTarget()
