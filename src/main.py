@@ -21,14 +21,17 @@ class tinyOtaMain(runcore.tinyOtaRun):
         self._initMain()
 
     def _initMain( self ):
-        self.connectStage = uidef.kConnectStage_Rom
+        pass
 
     def _register_callbacks(self):
         self.menuHelpAction_homePage.triggered.connect(self.callbackShowHomePage)
         self.menuHelpAction_aboutAuthor.triggered.connect(self.callbackShowAboutAuthor)
         self.menuHelpAction_revisionHistory.triggered.connect(self.callbackShowRevisionHistory)
         self.comboBox_mcuDevice.currentIndexChanged.connect(self.callbackSetMcuDevice)
+        self.comboBox_norFlashModel.currentIndexChanged.connect(self.callbackSetNorFlashModel)
+        self.comboBox_xspiInstance.currentIndexChanged.connect(self.callbackSetXspiInstance)
         self.comboBox_interface.currentIndexChanged.connect(self.callbackSetInterface)
+        self.comboBox_blMode.currentIndexChanged.connect(self.callbackSetBlMode)
         self.pushButton_connect.clicked.connect(self.callbackConnectToDevice)
 
     def _setupMcuTargets( self ):
@@ -40,6 +43,12 @@ class tinyOtaMain(runcore.tinyOtaRun):
     def callbackSetMcuDevice( self ):
         self._setupMcuTargets()
 
+    def callbackSetNorFlashModel( self ):
+        self.setNorFlashModelValue()
+
+    def callbackSetXspiInstance( self ):
+        self.setXspiInstanceValue()
+
     def _setUartUsbPort( self ):
         usbIdList = self.getUsbid()
         retryToDetectUsb = False
@@ -48,6 +57,9 @@ class tinyOtaMain(runcore.tinyOtaRun):
 
     def callbackSetInterface( self ):
         self._setUartUsbPort()
+
+    def callbackSetBlMode( self ):
+        self.setBlModeValue()
 
     def callbackConnectToDevice( self ):
         pass

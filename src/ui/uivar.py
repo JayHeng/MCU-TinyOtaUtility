@@ -10,7 +10,12 @@ g_exeTopRoot = None
 g_hasSubWinBeenOpened = False
 g_cfgFilename = None
 g_toolCommDict = {'mcuDevice':None,
+                  'norFlashModel':None,
+                  'xspiInstance':None,
+                  'xspiNorOpt0':None,
+                  'xspiNorOpt1':None,
                   'isUsbhidPortSelected':None,
+                  'blMode':None,
                  }
 
 def initVar(cfgFilename):
@@ -29,7 +34,12 @@ def initVar(cfgFilename):
         g_toolCommDict = cfgDict["cfgToolCommon"][0]
     else:
         g_toolCommDict = {'mcuDevice':0,
+                          'norFlashModel':0,
+                          'xspiInstance':0,
+                          'xspiNorOpt0':0xc0000005,
+                          'xspiNorOpt1':0x0,
                           'isUsbhidPortSelected':True,
+                          'blMode':0,
                          }
 
 def deinitVar(cfgFilename=None):

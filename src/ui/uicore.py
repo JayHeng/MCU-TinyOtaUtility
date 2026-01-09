@@ -45,7 +45,13 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
         self.mcuDevice = None
         self._initTargetSetupValue()
-        self.setTargetSetupValue()
+        self.xspiInstance = 0
+        self._initXspiInstanceValue()
+        self.xspiNorOpt0 = 0xC0603005
+        self.xspiNorOpt1 = 0x0
+        self._initXspiNorOptValue()
+        self.norFlashModel = None
+        self._initNorFlashModelValue()
         self.initFuncUi()
 
     def initFuncUi( self ):
@@ -57,7 +63,8 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.usbhidPid = None
         self.isUsbhidConnected = False
         self.usbhidToConnect = [None] * 2
-        self._initPortSetupValue()
+        self.blMode = None
+        self._initBlModeValue()
 
     def showAboutMessage( self, myTitle, myContent):
         QMessageBox.about(self, myTitle, myContent )
@@ -69,14 +76,130 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.comboBox_mcuDevice.clear()
         self.comboBox_mcuDevice.addItems(uidef.kMcuDevice_v1_0)
         self.comboBox_mcuDevice.setCurrentIndex(self.toolCommDict['mcuDevice'])
+        self.mcuDevice = self.comboBox_mcuDevice.currentText()
 
     def setTargetSetupValue( self ):
         self.mcuDevice = self.comboBox_mcuDevice.currentText()
         self.toolCommDict['mcuDevice'] = self.comboBox_mcuDevice.currentIndex()
-
-    def updateTargetSetupValue( self ):
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
-        return True
+
+    def _initXspiInstanceValue( self ):
+        self.xspiInstance = self.toolCommDict['xspiInstance']
+        self.comboBox_xspiInstance.setCurrentIndex(self.xspiInstance)
+
+    def setXspiInstanceValue( self ):
+        self.xspiInstance = self.comboBox_xspiInstance.currentIndex()
+        self.toolCommDict['xspiInstance'] = self.xspiInstance
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
+
+    def _initXspiNorOptValue( self ):
+        self.xspiNorOpt0 = self.toolCommDict['xspiNorOpt0']
+        self.xspiNorOpt1 = self.toolCommDict['xspiNorOpt1']
+        self.lineEdit_norCfgOption0.setText(str(hex(self.xspiNorOpt0)))
+        self.lineEdit_norCfgOption1.setText(str(hex(self.xspiNorOpt1)))
+
+    def _getXspiNorOptValue( self, optTxt ):
+        res = False
+        val = 0
+        if len(optTxt) > 2 and optTxt[0:2] == '0x':
+            try:
+                val = int(optTxt[2:len(optTxt)], 16)
+                res = True
+            except:
+                self.popupMsgBox('Nor CFG Option should be like this: 0xc0000001')
+        return res, val
+
+    def updateXspiNorOptValue( self ):
+        res, val = self._getXspiNorOptValue(self.lineEdit_norCfgOption0.text())
+        if res:
+            self.xspiNorOpt0 = val
+            self.toolCommDict['xspiNorOpt0'] = self.xspiNorOpt0
+            res, val = self._getXspiNorOptValue(self.lineEdit_norCfgOption1.text())
+            if res:
+                self.xspiNorOpt1 = val
+                self.toolCommDict['xspiNorOpt1'] = self.xspiNorOpt1
+
+    def _setNorFlashModelCfgValue( self ):
+        txt = self.norFlashModel
+        self.xspiNorOpt0 = 0x0
+        self.xspiNorOpt1 = 0x0
+        if txt == uidef.kFlexspiNorDevice_Winbond_W25Q128JV:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Winbond_W25Q128JV
+        elif txt == uidef.kFlexspiNorDevice_Winbond_W35T51NW:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Winbond_W35T51NW
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25L12845G:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25L12845G
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51245G:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51245G
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_OPI:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_OPI
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_2nd:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_2nd
+            self.xspiNorOpt1 = uidef.kFlexspiNorOpt1_MXIC_MX25UM51345G_2nd
+        elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25Q64C:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25Q64C
+        elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25LB256E:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LB256E
+        elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25LT256E:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LT256E
+        elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25LX256E:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LX256E
+        elif txt == uidef.kFlexspiNorDevice_ISSI_IS25LP064A:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LP064A
+        elif txt == uidef.kFlexspiNorDevice_ISSI_IS25LX256:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LX256
+        elif txt == uidef.kFlexspiNorDevice_ISSI_IS26KS512S:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
+        elif txt == uidef.kFlexspiNorDevice_Micron_MT25QL128A:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT25QL128A
+        elif txt == uidef.kFlexspiNorDevice_Micron_MT35X_RW303:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X_RW303
+        elif txt == uidef.kFlexspiNorDevice_Micron_MT35X_RW304:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X_RW304
+        elif txt == uidef.kFlexspiNorDevice_Adesto_AT25SF128A:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_AT25SF128A
+        elif txt == uidef.kFlexspiNorDevice_Adesto_ATXP032:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_ATXP032
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S25FL064L:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL064L
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S25FL128S:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL128S
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S28HS512T:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S28HS512T
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
+            self.xspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S26KS512S
+        else:
+            pass
+        self.lineEdit_norCfgOption0.setText(str(hex(self.xspiNorOpt0)))
+        self.lineEdit_norCfgOption1.setText(str(hex(self.xspiNorOpt1)))
+
+    def _initNorFlashModelValue( self ):
+        self.comboBox_norFlashModel.setCurrentIndex(self.toolCommDict['norFlashModel'])
+        self.norFlashModel = self.comboBox_norFlashModel.currentText()
+
+    def setNorFlashModelValue( self ):
+        self.norFlashModel = self.comboBox_norFlashModel.currentText()
+        self.toolCommDict['norFlashModel'] = self.comboBox_norFlashModel.currentIndex()
+        self._setNorFlashModelCfgValue()
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
+
+    def _initBlModeValue( self ):
+        self.comboBox_blMode.setCurrentIndex(self.toolCommDict['blMode'])
+        self.setBlModeValue()
+
+    def setBlModeValue( self ):
+        self.blMode = self.comboBox_blMode.currentIndex()
+        if self.blMode == 0:
+            self.connectStage = uidef.kConnectStage_Rom
+        elif self.blMode == 1:
+            self.connectStage = uidef.kConnectStage_Flashloader
+        else:
+            pass
+        self.toolCommDict['blMode'] = self.blMode
+        self._initPortSetupValue()
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
     def _initPortSetupValue( self ):
         if self.toolCommDict['isUsbhidPortSelected']:
@@ -84,7 +207,7 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         else:
             self.comboBox_interface.setCurrentIndex(0)
         usbIdList = self.getUsbid()
-        self.setPortSetupValue(uidef.kConnectStage_Rom, usbIdList)
+        self.setPortSetupValue(self.connectStage, usbIdList)
 
     def task_doDetectUsbhid( self ):
         while True:

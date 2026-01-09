@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>995</width>
+    <width>990</width>
     <height>598</height>
    </rect>
   </property>
@@ -140,17 +140,117 @@
      </property>
      <item>
       <property name="text">
-       <string>QuadSPI</string>
+       <string>W25QxxxJV</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>OctalSPI</string>
+       <string>W35T51NW</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>HyperFlash</string>
+       <string>MX25Lxxx45G</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MX25UM51245G</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MX25UM51345G</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MX25UM51345G_Def_OPI_DDR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MX25UM51345G_2ndPinmux</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GD25QxxxC</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GD25LBxxxE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GD25LTxxxE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>GD25LXxxxE</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>IS25LPxxxA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>IS25LXxxx</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>IS26KSxxxS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MT25QLxxxA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RW303-MT35XUxxxABA1G</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RW304-MT35XUxxxABA2G_Def_OPI_DDR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>AT25SFxxxA</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ATXPxxx</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>S25FLxxxL</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>S25FLxxxS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>S28HSxxxT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>S26KSxxxS</string>
       </property>
      </item>
     </widget>
@@ -1314,7 +1414,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>995</width>
+     <width>990</width>
      <height>21</height>
     </rect>
    </property>
