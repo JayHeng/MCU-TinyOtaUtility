@@ -96,7 +96,7 @@ class tinyOtaMain(runcore.tinyOtaRun):
         while True:
             if not self.updatePortSetupValue(False, True):
                 if self.connectStage == uidef.kConnectStage_Rom:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_doubleCheckBmod'])
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_doubleCheckBmod'][0])
                 self._connectFailureHandler()
                 return
             if self.connectStage == uidef.kConnectStage_Rom:
@@ -110,11 +110,11 @@ class tinyOtaMain(runcore.tinyOtaRun):
                         self.setPortSetupValue(self.connectStage, usbIdList, True, True)
                     else:
                         self.updateConnectStatus('red')
-                        self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToJumpToFl'])
+                        self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToJumpToFl'][0])
                         return
                 else:
                     self.updateConnectStatus('red')
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_doubleCheckBmod'])
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_doubleCheckBmod'][0])
                     return
             elif self.connectStage == uidef.kConnectStage_Flashloader:
                 self.connectToDevice(self.connectStage)
@@ -122,7 +122,7 @@ class tinyOtaMain(runcore.tinyOtaRun):
                     self.getMcuDeviceInfoViaFlashloader()
                     self.connectStage = uidef.kConnectStage_ExternalMemory
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToPingFl'])
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToPingFl'][0])
                     self._connectFailureHandler()
                     return
             elif self.connectStage == uidef.kConnectStage_ExternalMemory:
@@ -131,7 +131,7 @@ class tinyOtaMain(runcore.tinyOtaRun):
                     self.connectStage = uidef.kConnectStage_Reset
                     self.updateConnectStatus('blue')
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToCfgBootDevice'])
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToCfgBootDevice'][0])
                     self._connectFailureHandler()
                 return
             elif self.connectStage == uidef.kConnectStage_Reset:

@@ -337,7 +337,7 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             self.pushButton_connect.setText('Reset')
         else:
             return
-        self.pushButton_connect.setStyleSheet("background-color: " + color + ";")
+        self.pushButton_connect.setStyleSheet("color: " + color + ";")
 
     def popupMsgBox( self, msgStr, myTitle="Error"):
         QMessageBox.information(self, myTitle, msgStr )
