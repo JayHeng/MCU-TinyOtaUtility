@@ -52,14 +52,21 @@ class Target(object):
         self.availablePeripherals = misc.get_dict_default(kwargs, 'availablePeripherals', 0)
         self.romUsbVid = misc.get_dict_default(kwargs, 'romUsbVid', None)
         self.romUsbPid = misc.get_dict_default(kwargs, 'romUsbPid', None)
+        self.hasSdpReadRegisterCmd = misc.get_dict_default(kwargs, 'hasSdpReadRegisterCmd', None)
+        self.bootHeaderType = misc.get_dict_default(kwargs, 'bootHeaderType', None)
         self.flashloaderUsbVid = misc.get_dict_default(kwargs, 'flashloaderUsbVid', None)
         self.flashloaderUsbPid = misc.get_dict_default(kwargs, 'flashloaderUsbPid', None)
+        self.flashloaderLoadAddr = misc.get_dict_default(kwargs, 'flashloaderLoadAddr', None)
+        self.flashloaderJumpAddr = misc.get_dict_default(kwargs, 'flashloaderJumpAddr', None)
         self.supportedPeripheralSpeed_uart = misc.get_dict_default(kwargs, 'supportedPeripheralSpeed_uart', None)
         self.flexspiNorDevice = misc.get_dict_default(kwargs, 'flexspiNorDevice', None)
         self.flexspiNorMemBase = misc.get_dict_default(kwargs, 'flexspiNorMemBase0', None)
         self.flexspiNorMemBase0 = misc.get_dict_default(kwargs, 'flexspiNorMemBase0', None)
         self.flexspiNorMemBase1 = misc.get_dict_default(kwargs, 'flexspiNorMemBase1', None)
         self.isSipFlexspiNorDevice = misc.get_dict_default(kwargs, 'isSipFlexspiNorDevice', None)
+        self.xspiNorCfgInfoOffset = misc.get_dict_default(kwargs, 'xspiNorCfgInfoOffset', None)
+        self.xspiNorCfgInfoLen = misc.get_dict_default(kwargs, 'xspiNorCfgInfoLen', None)
+        self.ramFreeSpaceStart_LoadCommOpt = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadCommOpt', None)
 
     ##
     # @brief Check if a command is supported by the target.

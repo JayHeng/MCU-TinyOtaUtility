@@ -32,6 +32,7 @@ import sys, os
 sys.path.append(os.path.abspath(".."))
 from boot.memoryrange import MemoryRange
 from ui import uidef
+from run import rundef
 
 cpu = 'MIMXRT1176'
 board = 'EVK'
@@ -42,15 +43,23 @@ mcuSeries = uidef.kMcuSeries_iMXRT11yy
 availablePeripherals = 0x11
 romUsbVid = '0x1FC9'
 romUsbPid = '0x013D'
+hasSdpReadRegisterCmd = None
+bootHeaderType = rundef.kBootHeaderType_IVT
 flashloaderUsbVid = '0x15A2'
 flashloaderUsbPid = '0x0073'
+flashloaderLoadAddr = None
+flashloaderJumpAddr = None
 availableCommands = 0x5EFDF
 supportedPeripheralSpeed_uart = [4800, 9600, 19200, 57600, 115200] # @todo Verify
 
-flexspiNorDevice = 0xc0000005
+flexspiNorDevice = uidef.kFlexspiNorDevice_ISSI_IS25LP064A
 flexspiNorMemBase0 = 0x30000000
 flexspiNorMemBase1 = 0x60000000
 isSipFlexspiNorDevice = False
+xspiNorCfgInfoOffset = 0x400
+xspiNorCfgInfoLen    = 0x200
+
+ramFreeSpaceStart_LoadCommOpt        = 0x20202000
 
 # memory map
 memoryRange = {

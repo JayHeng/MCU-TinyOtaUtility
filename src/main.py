@@ -13,6 +13,11 @@ from run import runcore
 g_main_win = None
 g_task_detectUsbhid = None
 
+kRetryPingTimes = 2
+
+kBootloaderType_Rom         = 0
+kBootloaderType_Flashloader = 1
+
 class tinyOtaMain(runcore.tinyOtaRun):
 
     def __init__(self, parent=None):
@@ -61,8 +66,84 @@ class tinyOtaMain(runcore.tinyOtaRun):
     def callbackSetBlMode( self ):
         self.setBlModeValue()
 
+    def _retryToPingBootloader( self, bootType ):
+        pingStatus = False
+        pingCnt = kRetryPingTimes
+        while (not pingStatus) and pingCnt > 0:
+            if bootType == kBootloaderType_Rom:
+                pingStatus = self.pingRom()
+            elif bootType == kBootloaderType_Flashloader:
+                # This is mainly for RT1170 flashloader, but it is also ok for other RT devices
+                if (not self.isUsbhidPortSelected):
+                    time.sleep(3)
+                pingStatus = self.pingFlashloader()
+            else:
+                pass
+            if pingStatus:
+                break
+            pingCnt = pingCnt - 1
+            if self.isUsbhidPortSelected:
+                time.sleep(2)
+        return pingStatus
+
+    def _connectFailureHandler( self ):
+        self.initConnectStage()
+        self.updateConnectStatus('red')
+        usbIdList = self.getUsbid()
+        self.setPortSetupValue(self.connectStage, usbIdList, False, False)
+
     def callbackConnectToDevice( self ):
-        pass
+        while True:
+            if not self.updatePortSetupValue(False, True):
+                if self.connectStage == uidef.kConnectStage_Rom:
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_doubleCheckBmod'])
+                self._connectFailureHandler()
+                return
+            if self.connectStage == uidef.kConnectStage_Rom:
+                self.connectToDevice(self.connectStage)
+                if self._retryToPingBootloader(kBootloaderType_Rom):
+                    self.getMcuDeviceInfoViaRom()
+                    self.getMcuDeviceHabStatus()
+                    if self.jumpToFlashloader():
+                        self.connectStage = uidef.kConnectStage_Flashloader
+                        usbIdList = self.getUsbid()
+                        self.setPortSetupValue(self.connectStage, usbIdList, True, True)
+                    else:
+                        self.updateConnectStatus('red')
+                        self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToJumpToFl'])
+                        return
+                else:
+                    self.updateConnectStatus('red')
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_doubleCheckBmod'])
+                    return
+            elif self.connectStage == uidef.kConnectStage_Flashloader:
+                self.connectToDevice(self.connectStage)
+                if self._retryToPingBootloader(kBootloaderType_Flashloader):
+                    self.getMcuDeviceInfoViaFlashloader()
+                    self.connectStage = uidef.kConnectStage_ExternalMemory
+                else:
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToPingFl'])
+                    self._connectFailureHandler()
+                    return
+            elif self.connectStage == uidef.kConnectStage_ExternalMemory:
+                if self.configureBootDevice():
+                    self.getBootDeviceInfoViaFlashloader()
+                    self.connectStage = uidef.kConnectStage_Reset
+                    self.updateConnectStatus('blue')
+                else:
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_failToCfgBootDevice'])
+                    self._connectFailureHandler()
+                return
+            elif self.connectStage == uidef.kConnectStage_Reset:
+                self.resetMcuDevice()
+                self.initConnectStage()
+                self.updateConnectStatus('green')
+                usbIdList = self.getUsbid()
+                self.setPortSetupValue(self.connectStage, usbIdList, True, True)
+                self.connectToDevice(self.connectStage)
+                return
+            else:
+                pass
 
     def _deinitToolToExit( self ):
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)

@@ -185,18 +185,30 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self._setNorFlashModelCfgValue()
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
+    def isInfineonMirrorBitDevice( self ):
+        if self.norFlashModel == uidef.kFlexspiNorDevice_ISSI_IS26KS512S or \
+           self.norFlashModel == uidef.kFlexspiNorDevice_Cypress_S25FL128S or \
+           self.norFlashModel == uidef.kFlexspiNorDevice_Cypress_S28HS512T or \
+           self.norFlashModel == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
+            return True
+        else:
+            return False
+
     def _initBlModeValue( self ):
         self.comboBox_blMode.setCurrentIndex(self.toolCommDict['blMode'])
         self.setBlModeValue()
 
-    def setBlModeValue( self ):
-        self.blMode = self.comboBox_blMode.currentIndex()
+    def initConnectStage( self ):
         if self.blMode == 0:
             self.connectStage = uidef.kConnectStage_Rom
         elif self.blMode == 1:
             self.connectStage = uidef.kConnectStage_Flashloader
         else:
-            pass
+            pass  
+
+    def setBlModeValue( self ):
+        self.blMode = self.comboBox_blMode.currentIndex()
+        self.initConnectStage()
         self.toolCommDict['blMode'] = self.blMode
         self._initPortSetupValue()
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
@@ -318,6 +330,28 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.toolCommDict['isUsbhidPortSelected'] = self.isUsbhidPortSelected
         return status
 
+    def updateConnectStatus( self, color='green' ):
+        if color == 'green' or color == 'red':
+            self.pushButton_connect.setText('Connnect')
+        elif color == 'blue':
+            self.pushButton_connect.setText('Reset')
+        else:
+            return
+        self.pushButton_connect.setStyleSheet("background-color: " + color + ";")
+
     def popupMsgBox( self, msgStr, myTitle="Error"):
         QMessageBox.information(self, myTitle, msgStr )
+
+    def convertLongIntHexText( self, hexText ):
+        lastStr = hexText[len(hexText) - 1]
+        if lastStr == 'l' or lastStr == 'L':
+            return hexText[0:len(hexText) - 1]
+        else:
+            return hexText
+
+    def printDeviceStatus( self, statusStr ):
+        self.textEdit_commStatus.append(statusStr)
+
+    def clearDeviceStatus( self ):
+        self.textEdit_commStatus.clear()
 
