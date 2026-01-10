@@ -63,6 +63,7 @@ class Target(object):
         self.flexspiNorMemBase = misc.get_dict_default(kwargs, 'flexspiNorMemBase0', None)
         self.flexspiNorMemBase0 = misc.get_dict_default(kwargs, 'flexspiNorMemBase0', None)
         self.flexspiNorMemBase1 = misc.get_dict_default(kwargs, 'flexspiNorMemBase1', None)
+        self.xspiNorEraseAlignment = misc.get_dict_default(kwargs, 'xspiNorEraseAlignment', None)
         self.isSipFlexspiNorDevice = misc.get_dict_default(kwargs, 'isSipFlexspiNorDevice', None)
         self.xspiNorCfgInfoOffset = misc.get_dict_default(kwargs, 'xspiNorCfgInfoOffset', None)
         self.xspiNorCfgInfoLen = misc.get_dict_default(kwargs, 'xspiNorCfgInfoLen', None)

@@ -68,7 +68,6 @@ class tinyOtaRun(uicore.tinyOtaUi):
         self.sdphostVectorsDir = os.path.join(self.exeTopRoot, 'tools', 'sdphost', 'win', 'vectors')
         self.blhostVectorsDir = os.path.join(self.exeTopRoot, 'tools', 'blhost2_6', 'win', 'vectors')
         self.mcuDeviceHabStatus = None
-        self.bootDeviceMemBase = None
         self.comMemWriteUnit = 0x1
         self.comMemEraseUnit = 0x1
         self.comMemReadUnit = 0x1

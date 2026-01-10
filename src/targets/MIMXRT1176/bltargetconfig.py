@@ -55,6 +55,7 @@ supportedPeripheralSpeed_uart = [4800, 9600, 19200, 57600, 115200] # @todo Verif
 flexspiNorDevice = uidef.kFlexspiNorDevice_ISSI_IS25LP064A
 flexspiNorMemBase0 = 0x30000000
 flexspiNorMemBase1 = 0x60000000
+xspiNorEraseAlignment = 0x1 # in byte
 isSipFlexspiNorDevice = False
 xspiNorCfgInfoOffset = 0x400
 xspiNorCfgInfoLen    = 0x200

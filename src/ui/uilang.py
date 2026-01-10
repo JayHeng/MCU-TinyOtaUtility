@@ -35,6 +35,8 @@ kMsgLanguageContentDict = {
         'connectError_doubleCheckBmod':       ['Make sure that you have put MCU in UART SDP mode (BMOD[1:0] pins = 2\'b01)!'],
         'connectError_failToJumpToFl':        ['MCU has entered ROM SDP mode but failed to jump to Flashloader, Please reset board and try again!'],
         'connectError_failToPingFl':          ['Failed to ping Flashloader, Please reset board and consider updating flashloader.srec file under /src/targets/ then try again!'],
-        'connectError_failToCfgBootDevice':   ['MCU has entered Flashloader but failed to configure external memory, Please reset board and set proper boot device then try again!'],
+        'connectError_failToCfgBootDevice':   ['MCU has entered Flashloader but failed to configure Flash memory!'],
+        'connectError_hasnotCfgBootDevice':   ['Please configure Flash via Flashloader first!'],
+        'connectError_hasnotEnterFl':         ['Please connect to Flashloader first!'],
         'connectError_InvalidBootableFl':     ['Cannot find bootable flashloader file!'],
 }

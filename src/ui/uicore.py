@@ -25,7 +25,10 @@ from utils import misc
 
 kRetryDetectTimes = 2
 
-s_serialPort = serial.Serial()
+s_isGaugeWorking = False
+s_curGauge = 0
+s_maxGauge = 0
+s_gaugeIntervalSec = 1
 
 class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
@@ -342,6 +345,45 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
     def popupMsgBox( self, msgStr, myTitle="Error"):
         QMessageBox.information(self, myTitle, msgStr )
 
+    def task_doIncreaseGauge( self ):
+        while True:
+            self._increaseGauge()
+            global s_gaugeIntervalSec
+            time.sleep(s_gaugeIntervalSec)
+
+    def _increaseGauge( self ):
+        global s_isGaugeWorking
+        global s_curGauge
+        global s_maxGauge
+        global s_gaugeIntervalSec
+        if s_isGaugeWorking:
+            gaugePercentage = s_curGauge * 1.0 / s_maxGauge
+            if gaugePercentage <= 0.9:
+                s_gaugeIntervalSec = int(gaugePercentage  / 0.1) * 0.5 + 0.5
+                self.progressBar_action.setValue(s_curGauge)
+                s_curGauge += 1
+
+    def initGauge( self ):
+        global s_isGaugeWorking
+        global s_curGauge
+        global s_maxGauge
+        global s_gaugeIntervalSec
+        s_isGaugeWorking = True
+        s_curGauge = 0
+        s_gaugeIntervalSec = 0.5
+        s_maxGauge = self.progressBar_action.maximum()
+        self.progressBar_action.setValue(s_curGauge)
+
+    def deinitGauge( self ):
+        global s_isGaugeWorking
+        global s_curGauge
+        global s_maxGauge
+        global s_gaugeIntervalSec
+        s_isGaugeWorking = False
+        s_curGauge = s_maxGauge
+        s_gaugeIntervalSec = 1
+        self.progressBar_action.setValue(s_maxGauge)
+
     def convertLongIntHexText( self, hexText ):
         lastStr = hexText[len(hexText) - 1]
         if lastStr == 'l' or lastStr == 'L':
@@ -354,4 +396,53 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
     def clearDeviceStatus( self ):
         self.textEdit_commStatus.clear()
+
+    def getFormattedFuseValue( self, fuseValue, direction='LSB'):
+        formattedVal32 = ''
+        for i in range(8):
+            loc = 0
+            if direction =='LSB':
+                loc = 32 - (i + 1) * 4
+            elif direction =='MSB':
+                loc = i * 4
+            else:
+                pass
+            halfbyteStr = str(hex((fuseValue & (0xF << loc))>> loc))
+            formattedVal32 += halfbyteStr[2]
+        return formattedVal32
+
+    def getFormattedHexValue( self, val32 ):
+        return ('0x' + self.getFormattedFuseValue(val32))
+
+    def getFormattedUpperHexValue( self, val32 ):
+        return ('0x' + self.getFormattedFuseValue(val32).upper())
+
+    def getVal32FromHexText( self, hexText ):
+        status = False
+        val32 = None
+        if len(hexText) > 2 and hexText[0:2] == '0x':
+            try:
+                val32 = int(hexText[2:len(hexText)], 16)
+                status = True
+            except:
+                pass
+        if not status:
+            self.popupMsgBox('Range property should be like this: 0x2000')
+        return status, val32
+
+    def getComMemStartAddress( self ):
+        return self.getVal32FromHexText(self.lineEdit_rangeStart.text())
+
+    def getComMemByteLength( self ):
+        return self.getVal32FromHexText(self.lineEdit_rangeLength.text())
+
+    def getComMemBinFile( self ):
+        memBinFile = self.m_filePicker_memBinFile.GetPath()
+        return memBinFile.encode('utf-8').encode("gbk")
+
+    def printMem( self , memStr ):
+        self.textEdit_memWin.append(memStr)
+
+    def clearMem( self ):
+        self.textEdit_memWin.clear()
 
