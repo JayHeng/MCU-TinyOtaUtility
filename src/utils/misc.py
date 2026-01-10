@@ -54,7 +54,7 @@ def align_down(x, a):
     return x & ~(a - 1)
 
 def align_up(x, a):
-    return (x + a - 1) / a * a
+    return ((x + a - 1) // a) * a
 
 # This is a modifed version of mkarg from commands module. It will never use single
 # quoting, because the DOS shell does not like that.
