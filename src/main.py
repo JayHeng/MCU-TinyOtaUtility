@@ -146,6 +146,7 @@ class tinyOtaMain(runcore.tinyOtaRun):
                 pass
 
     def _deinitToolToExit( self ):
+        self.updateXspiNorOptValue()
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         uivar.deinitVar()
 
