@@ -35,6 +35,7 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
     def __init__(self, parent=None):
         super(tinyOtaUi, self).__init__(parent)
         self.setupUi(self)
+        self._initMemWinProperty()
 
         self.exeBinRoot = os.getcwd()
         self.exeTopRoot = os.path.dirname(self.exeBinRoot)
@@ -56,6 +57,13 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.norFlashModel = None
         self._initNorFlashModelValue()
         self.initFuncUi()
+
+    def _initMemWinProperty( self ):
+        font = QFont()
+        font.setFamily("Consolas")
+        font.setFixedPitch(True)
+        font.setPointSize(8)
+        self.textEdit_memWin.setFont(font)
 
     def initFuncUi( self ):
         self.isUartPortSelected = None
