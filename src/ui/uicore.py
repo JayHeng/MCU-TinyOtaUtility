@@ -350,6 +350,23 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             return
         self.pushButton_connect.setStyleSheet("color: " + color + ";")
 
+    def updateMemOperateStatus( self, operate, state=0 ):
+        if state == 1:
+            if operate == 'erase':
+                self.pushButton_erase.setStyleSheet("background-color: yellow;")
+            elif operate == 'read':
+                self.pushButton_read.setStyleSheet("background-color: yellow;")
+            elif operate == 'write':
+                self.pushButton_write.setStyleSheet("background-color: yellow;")
+            else:
+                pass
+        elif state == 0:
+            self.pushButton_erase.setStyleSheet("background-color: white;")
+            self.pushButton_read.setStyleSheet("background-color: white;")
+            self.pushButton_write.setStyleSheet("background-color: white;")
+        else:
+            pass
+
     def popupMsgBox( self, msgStr, myTitle="Error"):
         QMessageBox.information(self, myTitle, msgStr )
 
@@ -444,9 +461,16 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
     def getComMemByteLength( self ):
         return self.getVal32FromHexText(self.lineEdit_rangeLength.text())
 
+    def browseFile( self ):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Select Data File", "", "All (*);;BIN (*.bin)"
+        )
+        if path:
+            self.lineEdit_browseFile.setText(path)
+            self.memBinFile = path
+
     def getComMemBinFile( self ):
-        memBinFile = self.m_filePicker_memBinFile.GetPath()
-        return memBinFile.encode('utf-8').encode("gbk")
+        return self.memBinFile
 
     def printMem( self , memStr ):
         self.textEdit_memWin.append(memStr)

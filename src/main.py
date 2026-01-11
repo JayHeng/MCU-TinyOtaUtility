@@ -50,6 +50,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.pushButton_read.clicked.connect(self.callbackReadMem)
         self.pushButton_write.clicked.connect(self.callbackWriteMem)
         self.pushButton_erase.clicked.connect(self.callbackEraseMem)
+        self.pushButton_browseFile.clicked.connect(self.callbackBrowseFile)
 
     def _setupMcuTargets( self ):
         self.setTargetSetupValue()
@@ -172,32 +173,41 @@ class tinyOtaMain(memcore.tinyOtaMem):
                 self._stopGaugeTimer()
             time.sleep(1)
 
-    def callbackReadMem( self, event ):
+    def callbackReadMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             #self._startGaugeTimer()
             #self.isAccessMemTaskPending = True
             #self.accessMemType = 'ReadMem'
+            self.updateMemOperateStatus('read', 1)
             self.readXspiFlashMemory()
+            self.updateMemOperateStatus('read', 0)
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
 
-    def callbackEraseMem( self, event ):
+    def callbackEraseMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             #self._startGaugeTimer()
             #self.isAccessMemTaskPending = True
             #self.accessMemType = 'EraseMem'
+            self.updateMemOperateStatus('erase', 1)
             self.eraseXspiFlashMemory()
+            self.updateMemOperateStatus('erase', 0)
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
-    def callbackWriteMem( self, event ):
+    def callbackWriteMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             #self._startGaugeTimer()
             #self.isAccessMemTaskPending = True
             #self.accessMemType = 'WriteMem'
+            self.updateMemOperateStatus('write', 1)
             self.writeXspiFlashMemory()
+            self.updateMemOperateStatus('write', 0)
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
+
+    def callbackBrowseFile( self ):
+        self.browseFile()
 
     def _deinitToolToExit( self ):
         self.updateXspiNorOptValue()
