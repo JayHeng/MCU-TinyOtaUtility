@@ -30,12 +30,25 @@ s_curGauge = 0
 s_maxGauge = 0
 s_gaugeIntervalSec = 1
 
+class increaseGaugeWorker(QThread):
+    sinOut = pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(increaseGaugeWorker, self).__init__(parent)
+
+    def run(self):
+        while True:
+            self.sinOut.emit()
+            time.sleep(s_gaugeIntervalSec)
+
 class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
     def __init__(self, parent=None):
         super(tinyOtaUi, self).__init__(parent)
         self.setupUi(self)
         self._initMemWinProperty()
+        self.increaseGaugeThread = increaseGaugeWorker()
+        self.increaseGaugeThread.sinOut.connect(self.task_increaseGauge)
 
         self.exeBinRoot = os.getcwd()
         self.exeTopRoot = os.path.dirname(self.exeBinRoot)
@@ -354,29 +367,29 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         if state == 1:
             if operate == 'erase':
                 self.pushButton_erase.setStyleSheet("background-color: yellow;")
+                self.pushButton_erase.setEnabled(False)
             elif operate == 'read':
                 self.pushButton_read.setStyleSheet("background-color: yellow;")
+                self.pushButton_read.setEnabled(False)
             elif operate == 'write':
                 self.pushButton_write.setStyleSheet("background-color: yellow;")
+                self.pushButton_write.setEnabled(False)
             else:
                 pass
         elif state == 0:
             self.pushButton_erase.setStyleSheet("background-color: white;")
+            self.pushButton_erase.setEnabled(True)
             self.pushButton_read.setStyleSheet("background-color: white;")
+            self.pushButton_read.setEnabled(True)
             self.pushButton_write.setStyleSheet("background-color: white;")
+            self.pushButton_write.setEnabled(True)
         else:
             pass
 
     def popupMsgBox( self, msgStr, myTitle="Error"):
         QMessageBox.information(self, myTitle, msgStr )
 
-    def task_doIncreaseGauge( self ):
-        while True:
-            self._increaseGauge()
-            global s_gaugeIntervalSec
-            time.sleep(s_gaugeIntervalSec)
-
-    def _increaseGauge( self ):
+    def task_increaseGauge( self ):
         global s_isGaugeWorking
         global s_curGauge
         global s_maxGauge

@@ -12,13 +12,24 @@ from mem import memcore
 
 g_main_win = None
 g_task_detectUsbhid = None
-g_task_increaseGauge = None
-g_task_accessMem = None
 
 kRetryPingTimes = 2
 
 kBootloaderType_Rom         = 0
 kBootloaderType_Flashloader = 1
+
+class memOperateWorker(QObject):
+    started = pyqtSignal()
+    request  = pyqtSignal(object)
+    finished = pyqtSignal()
+
+    def __init__(self):
+        super().__init__(None)
+
+    def run(self):
+        self.started.emit()
+        self.request.emit({"cmd": "mem_operate"})
+        self.finished.emit()
 
 class tinyOtaMain(memcore.tinyOtaMem):
 
@@ -28,8 +39,9 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self._initMain()
 
     def _initMain( self ):
-        self.isAccessMemTaskPending = False
         self.accessMemType = ''
+        self.memOperateThread = None
+        self.memOperateWorker = None
 
     def _startGaugeTimer( self ):
         self.initGauge()
@@ -158,51 +170,55 @@ class tinyOtaMain(memcore.tinyOtaMem):
             else:
                 pass
 
-    def task_doAccessMem( self ):
-        while True:
-            if self.isAccessMemTaskPending:
-                if self.accessMemType == 'ReadMem':
-                    self.readXspiFlashMemory()
-                elif self.accessMemType == 'EraseMem':
-                    self.eraseXspiFlashMemory()
-                elif self.accessMemType == 'WriteMem':
-                    self.writeXspiFlashMemory()
-                else:
-                    pass
-                self.isAccessMemTaskPending = False
-                self._stopGaugeTimer()
-            time.sleep(1)
+    def task_doAccessMem( self, obj ):
+        if isinstance(obj, dict) and obj.get("cmd") == "mem_operate":
+            self._startGaugeTimer()
+            if self.accessMemType == 'read':
+                self.readXspiFlashMemory()
+            elif self.accessMemType == 'erase':
+                self.eraseXspiFlashMemory()
+            elif self.accessMemType == 'write':
+                self.writeXspiFlashMemory()
+            else:
+                pass
+            self._stopGaugeTimer()
+
+    def _startMemOperateTask( self, taskType ):
+        self.memOperateThread = QThread(self)
+        self.memOperateWorker = memOperateWorker()
+        self.memOperateWorker.moveToThread(self.memOperateThread)
+        self.memOperateThread.started.connect(self.memOperateWorker.run)
+        self.memOperateWorker.request.connect(self.task_doAccessMem)
+        self.memOperateWorker.finished.connect(lambda: (
+            self.updateMemOperateStatus(taskType, 0),
+            self.memOperateThread.quit()
+        ))
+        self.memOperateWorker.finished.connect(self.memOperateThread.quit)
+        self.memOperateWorker.finished.connect(self.memOperateWorker.deleteLater)
+        self.memOperateThread.finished.connect(self.memOperateThread.deleteLater)
+        self.memOperateThread.start()
 
     def callbackReadMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            #self._startGaugeTimer()
-            #self.isAccessMemTaskPending = True
-            #self.accessMemType = 'ReadMem'
-            self.updateMemOperateStatus('read', 1)
-            self.readXspiFlashMemory()
-            self.updateMemOperateStatus('read', 0)
+            self.accessMemType = 'read'
+            self.updateMemOperateStatus(self.accessMemType, 1)
+            self._startMemOperateTask(self.accessMemType)
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
 
     def callbackEraseMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            #self._startGaugeTimer()
-            #self.isAccessMemTaskPending = True
-            #self.accessMemType = 'EraseMem'
-            self.updateMemOperateStatus('erase', 1)
-            self.eraseXspiFlashMemory()
-            self.updateMemOperateStatus('erase', 0)
+            self.accessMemType = 'erase'
+            self.updateMemOperateStatus(self.accessMemType, 1)
+            self._startMemOperateTask(self.accessMemType)
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
     def callbackWriteMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            #self._startGaugeTimer()
-            #self.isAccessMemTaskPending = True
-            #self.accessMemType = 'WriteMem'
-            self.updateMemOperateStatus('write', 1)
-            self.writeXspiFlashMemory()
-            self.updateMemOperateStatus('write', 0)
+            self.accessMemType = 'write'
+            self.updateMemOperateStatus(self.accessMemType, 1)
+            self._startMemOperateTask(self.accessMemType)
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
 
@@ -240,12 +256,6 @@ if __name__ == '__main__':
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)
     g_task_detectUsbhid.setDaemon(True)
     g_task_detectUsbhid.start()
-    #g_task_increaseGauge = threading.Thread(target=g_main_win.task_doIncreaseGauge)
-    #g_task_increaseGauge.setDaemon(True)
-    #g_task_increaseGauge.start()
-    #g_task_accessMem = threading.Thread(target=g_main_win.task_doAccessMem)
-    #g_task_accessMem.setDaemon(True)
-    #g_task_accessMem.start()
 
     sys.exit(app.exec_())
 
