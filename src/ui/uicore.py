@@ -25,30 +25,12 @@ from utils import misc
 
 kRetryDetectTimes = 2
 
-s_isGaugeWorking = False
-s_curGauge = 0
-s_maxGauge = 0
-s_gaugeIntervalSec = 1
-
-class increaseGaugeWorker(QThread):
-    sinOut = pyqtSignal()
-
-    def __init__(self, parent=None):
-        super(increaseGaugeWorker, self).__init__(parent)
-
-    def run(self):
-        while True:
-            self.sinOut.emit()
-            time.sleep(s_gaugeIntervalSec)
-
 class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
     def __init__(self, parent=None):
         super(tinyOtaUi, self).__init__(parent)
         self.setupUi(self)
         self._initMemWinProperty()
-        self.increaseGaugeThread = increaseGaugeWorker()
-        self.increaseGaugeThread.sinOut.connect(self.task_increaseGauge)
 
         self.exeBinRoot = os.getcwd()
         self.exeTopRoot = os.path.dirname(self.exeBinRoot)
@@ -389,38 +371,43 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
     def popupMsgBox( self, msgStr, myTitle="Error"):
         QMessageBox.information(self, myTitle, msgStr )
 
-    def task_increaseGauge( self ):
-        global s_isGaugeWorking
-        global s_curGauge
-        global s_maxGauge
-        global s_gaugeIntervalSec
-        if s_isGaugeWorking:
-            gaugePercentage = s_curGauge * 1.0 / s_maxGauge
+    def task_startGauge( self ):
+        if getattr(self, "progress_timer", None):
+            self.progress_timer.stop()
+        self.progress_timer = QTimer(self)
+        self.progress_timer.setInterval(int(self.gaugeIntervalSec * 1000))
+
+        def _tick_progress_to_99():
+            gaugePercentage = self.curGauge * 1.0 / self.maxGauge
             if gaugePercentage <= 0.9:
-                s_gaugeIntervalSec = int(gaugePercentage  / 0.1) * 0.5 + 0.5
-                self.progressBar_action.setValue(s_curGauge)
-                s_curGauge += 1
+                gaugeIntervalSec = int(gaugePercentage  / 0.1) * 0.5 + 0.5
+                delayCnt = int(gaugeIntervalSec / self.gaugeIntervalSec)
+                if self.timerDelayCnt > delayCnt:
+                    self.timerDelayCnt = 0
+                    val = self.progressBar_action.value()
+                    if val < self.maxGauge:
+                        self.progressBar_action.setValue(val + 1)
+                        self.curGauge = val + 1
+                else:
+                    self.timerDelayCnt += 1
+
+        self.progress_timer.timeout.connect(_tick_progress_to_99)
+        self.progress_timer.start()
 
     def initGauge( self ):
-        global s_isGaugeWorking
-        global s_curGauge
-        global s_maxGauge
-        global s_gaugeIntervalSec
-        s_isGaugeWorking = True
-        s_curGauge = 0
-        s_gaugeIntervalSec = 0.5
-        s_maxGauge = self.progressBar_action.maximum()
-        self.progressBar_action.setValue(s_curGauge)
+        self.timerDelayCnt = 1
+        self.curGauge = 0
+        self.gaugeIntervalSec = 0.5
+        self.maxGauge = self.progressBar_action.maximum()
+        self.progressBar_action.setValue(self.curGauge)
 
     def deinitGauge( self ):
-        global s_isGaugeWorking
-        global s_curGauge
-        global s_maxGauge
-        global s_gaugeIntervalSec
-        s_isGaugeWorking = False
-        s_curGauge = s_maxGauge
-        s_gaugeIntervalSec = 1
-        self.progressBar_action.setValue(s_maxGauge)
+        self.curGauge = self.maxGauge
+        self.timerDelayCnt = 1
+        self.gaugeIntervalSec = 1
+        if getattr(self, "progress_timer", None):
+            self.progress_timer.stop()
+        self.progressBar_action.setValue(self.maxGauge)
 
     def convertLongIntHexText( self, hexText ):
         lastStr = hexText[len(hexText) - 1]

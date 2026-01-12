@@ -19,17 +19,30 @@ kBootloaderType_Rom         = 0
 kBootloaderType_Flashloader = 1
 
 class memOperateWorker(QObject):
-    started = pyqtSignal()
-    request  = pyqtSignal(object)
+    started  = pyqtSignal()
     finished = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, owner, task_type):
         super().__init__(None)
+        self._owner = owner
+        self._task  = task_type
+        self._stop  = False
+
+    def stop(self):
+        self._stop = True
 
     def run(self):
         self.started.emit()
-        self.request.emit({"cmd": "mem_operate"})
-        self.finished.emit()
+        try:
+            if self._task == 'read':
+                self._owner.readXspiFlashMemory()
+            elif self._task == 'erase':
+                self._owner.eraseXspiFlashMemory()
+            elif self._task == 'write':
+                self._owner.writeXspiFlashMemory()
+            self.finished.emit()
+        except Exception as e:
+            pass
 
 class tinyOtaMain(memcore.tinyOtaMem):
 
@@ -42,12 +55,6 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.accessMemType = ''
         self.memOperateThread = None
         self.memOperateWorker = None
-
-    def _startGaugeTimer( self ):
-        self.initGauge()
-
-    def _stopGaugeTimer( self ):
-        self.deinitGauge()
 
     def _register_callbacks(self):
         self.menuHelpAction_homePage.triggered.connect(self.callbackShowHomePage)
@@ -170,30 +177,18 @@ class tinyOtaMain(memcore.tinyOtaMem):
             else:
                 pass
 
-    def task_doAccessMem( self, obj ):
-        if isinstance(obj, dict) and obj.get("cmd") == "mem_operate":
-            self._startGaugeTimer()
-            if self.accessMemType == 'read':
-                self.readXspiFlashMemory()
-            elif self.accessMemType == 'erase':
-                self.eraseXspiFlashMemory()
-            elif self.accessMemType == 'write':
-                self.writeXspiFlashMemory()
-            else:
-                pass
-            self._stopGaugeTimer()
-
     def _startMemOperateTask( self, taskType ):
+        self.initGauge()
+        self.task_startGauge()
         self.memOperateThread = QThread(self)
-        self.memOperateWorker = memOperateWorker()
+        self.memOperateWorker = memOperateWorker(self, taskType)
         self.memOperateWorker.moveToThread(self.memOperateThread)
         self.memOperateThread.started.connect(self.memOperateWorker.run)
-        self.memOperateWorker.request.connect(self.task_doAccessMem)
         self.memOperateWorker.finished.connect(lambda: (
             self.updateMemOperateStatus(taskType, 0),
+            self.deinitGauge(),
             self.memOperateThread.quit()
         ))
-        self.memOperateWorker.finished.connect(self.memOperateThread.quit)
         self.memOperateWorker.finished.connect(self.memOperateWorker.deleteLater)
         self.memOperateThread.finished.connect(self.memOperateThread.deleteLater)
         self.memOperateThread.start()
