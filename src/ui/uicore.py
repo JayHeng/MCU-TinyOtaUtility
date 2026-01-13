@@ -505,6 +505,71 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
     def getComMemBinFile( self ):
         return self.memBinFile
 
+    def getOtaFileStartAddress( self, fileType = 'stage0Bl' ):
+        status = False
+        val32 = None
+        self.otaMemStart = None
+        if fileType == 'stage0Bl':
+            status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartS0BL.text())
+        elif fileType == 'stage1Bl':
+            status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartS1BL.text())
+        elif fileType == 'appSlot0':
+            status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartAPP0.text())
+        elif fileType == 'appSlot1':
+            status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartAPP1.text())
+        else:
+            pass
+        if status:
+            self.otaMemStart = val32
+        
+    def browseOtaFile( self, fileType = 'stage0Bl' ):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Select Data File", "", "All (*);;BIN (*.bin)"
+        )
+        if path:
+            if fileType == 'stage0Bl':
+                self.lineEdit_stage0BlFile.setText(path)
+                self.stage0BlFile = path
+            elif fileType == 'stage1Bl':
+                self.lineEdit_stage1BlFile.setText(path)
+                self.stage1BlFile = path
+            elif fileType == 'appSlot0':
+                self.lineEdit_appSlot0File.setText(path)
+                self.appSlot0File = path
+            elif fileType == 'appSlot1':
+                self.lineEdit_appSlot1File.setText(path)
+                self.appSlot1File = path
+            else:
+                pass
+
+    def updateOtaOperateStatus( self, operate, state=0 ):
+        if state == 1:
+            if operate == 'stage0Bl':
+                self.pushButton_downloadS0BL.setStyleSheet("background-color: yellow;")
+                self.pushButton_downloadS0BL.setEnabled(False)
+            elif operate == 'stage1Bl':
+                self.pushButton_downloadS1BL.setStyleSheet("background-color: yellow;")
+                self.pushButton_downloadS1BL.setEnabled(False)
+            elif operate == 'appSlot0':
+                self.pushButton_downloadAPP0.setStyleSheet("background-color: yellow;")
+                self.pushButton_downloadAPP0.setEnabled(False)
+            elif operate == 'appSlot1':
+                self.pushButton_downloadAPP1.setStyleSheet("background-color: yellow;")
+                self.pushButton_downloadAPP1.setEnabled(False)
+            else:
+                pass
+        elif state == 0:
+            self.pushButton_downloadS0BL.setStyleSheet("background-color: white;")
+            self.pushButton_downloadS0BL.setEnabled(True)
+            self.pushButton_downloadS1BL.setStyleSheet("background-color: white;")
+            self.pushButton_downloadS1BL.setEnabled(True)
+            self.pushButton_downloadAPP0.setStyleSheet("background-color: white;")
+            self.pushButton_downloadAPP0.setEnabled(True)
+            self.pushButton_downloadAPP1.setStyleSheet("background-color: white;")
+            self.pushButton_downloadAPP1.setEnabled(True)
+        else:
+            pass
+
     def printMem( self , memStr ):
         self.textEdit_memWin.append(memStr)
 

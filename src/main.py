@@ -70,6 +70,14 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.pushButton_erase.clicked.connect(self.callbackEraseMem)
         self.pushButton_eraseChip.clicked.connect(self.callbackEraseMemChip)
         self.pushButton_browseFile.clicked.connect(self.callbackBrowseFile)
+        self.pushButton_stage0BlFile.clicked.connect(self.callbackBrowseS0BL)
+        self.pushButton_stage1BlFile.clicked.connect(self.callbackBrowseS1BL)
+        self.pushButton_appSlot0File.clicked.connect(self.callbackBrowseAPP0)
+        self.pushButton_appSlot1File.clicked.connect(self.callbackBrowseAPP1)
+        self.pushButton_downloadS0BL.clicked.connect(self.callbackDownloadS0BL)
+        self.pushButton_downloadS1BL.clicked.connect(self.callbackDownloadS1BL)
+        self.pushButton_downloadAPP0.clicked.connect(self.callbackDownloadAPP0)
+        self.pushButton_downloadAPP1.clicked.connect(self.callbackDownloadAPP1)
 
     def _setupMcuTargets( self ):
         self.setTargetSetupValue()
@@ -220,6 +228,9 @@ class tinyOtaMain(memcore.tinyOtaMem):
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
+    def callbackBrowseFile( self ):
+        self.browseFile()
+
     def callbackWriteMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             self.accessMemType = 'write'
@@ -229,8 +240,35 @@ class tinyOtaMain(memcore.tinyOtaMem):
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
 
-    def callbackBrowseFile( self ):
-        self.browseFile()
+    def callbackBrowseS0BL( self ):
+        self.browseOtaFile('stage0Bl')
+    def callbackBrowseS1BL( self ):
+        self.browseOtaFile('stage1Bl')
+    def callbackBrowseAPP0( self ):
+        self.browseOtaFile('appSlot0')
+    def callbackBrowseAPP1( self ):
+        self.browseOtaFile('appSlot1')
+
+    def callbackDownloadS0BL( self ):
+        self.getOtaFileStartAddress('stage0Bl')
+        self.updateOtaOperateStatus('stage0Bl', 1)
+        self.downloadOtaFile('stage0Bl')
+        self.updateOtaOperateStatus('stage0Bl', 0)
+    def callbackDownloadS1BL( self ):
+        self.getOtaFileStartAddress('stage1Bl')
+        self.updateOtaOperateStatus('stage1Bl', 1)
+        self.downloadOtaFile('stage1Bl')
+        self.updateOtaOperateStatus('stage1Bl', 0)
+    def callbackDownloadAPP0( self ):
+        self.getOtaFileStartAddress('appSlot0')
+        self.updateOtaOperateStatus('appSlot0', 1)
+        self.downloadOtaFile('appSlot0')
+        self.updateOtaOperateStatus('appSlot0', 0)
+    def callbackDownloadAPP1( self ):
+        self.getOtaFileStartAddress('appSlot1')
+        self.updateOtaOperateStatus('appSlot1', 1)
+        self.downloadOtaFile('appSlot1')
+        self.updateOtaOperateStatus('appSlot1', 0)
 
     def _deinitToolToExit( self ):
         self.updateXspiNorOptValue()

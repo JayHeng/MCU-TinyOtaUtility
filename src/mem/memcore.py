@@ -19,7 +19,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
         runcore.tinyOtaRun.__init__(self, parent)
 
         self.userFolder = os.path.join(self.exeTopRoot, 'gen', 'user_file')
-        self.userFilename = os.path.join(self.exeTopRoot, 'gen', 'user_file', 'user.dat')
+        self.userFilename = os.path.join(self.userFolder, 'user.bin')
 
         self.memParamStatus = None
         self.memParamStart = None
@@ -27,6 +27,12 @@ class tinyOtaMem(runcore.tinyOtaRun):
         self.memParamBinFile = None
         self.memParamDummyArg = None
         self.memParamUseFlashImageCmd = None
+
+        self.otaMemStart = 0
+        self.stage0BlFileTemp = os.path.join(self.userFolder, 'stage0Bl.bin')
+        self.stage1BlFileTemp = os.path.join(self.userFolder, 'stage1Bl.bin')
+        self.appSlot0FileTemp = os.path.join(self.userFolder, 'appSlot0.bin')
+        self.appSlot1FileTemp = os.path.join(self.userFolder, 'appSlot1.bin')
 
     def getOneLineContentToShow( self, addr, memLeft, fileObj ):
         pad_bytes_before = addr % 16
@@ -186,3 +192,40 @@ class tinyOtaMem(runcore.tinyOtaRun):
                     pass
                 if status != boot.status.kStatus_Success:
                     self.popupMsgBox('Failed to write Flash, error code is %d, You may forget to erase Flash first!' %(status))
+
+    def downloadOtaFile( self, fileType = 'stage0Bl' ):
+        memStart = self.otaMemStart
+        if fileType == 'stage0Bl':
+            memBinFile = self.stage0BlFile
+            tempMemFile = self.stage0BlFileTemp
+        elif fileType == 'stage1Bl':
+            memBinFile = self.stage1BlFile
+            tempMemFile = self.stage1BlFileTemp
+        elif fileType == 'appSlot0':
+            memBinFile = self.appSlot0File
+            tempMemFile = self.appSlot0FileTemp
+        elif fileType == 'appSlot1':
+            memBinFile = self.appSlot1File
+            tempMemFile = self.appSlot1FileTemp
+        else:
+            return
+        if os.path.isfile(memBinFile) and memStart != None:
+            memStart = self._convertComMemStart(memStart)
+            memEraseUnit = self.convertComMemEraseUnit(self.comMemEraseUnit)
+            if memStart % self.comMemWriteUnit:
+                self.popupMsgBox('Start Address should be aligned with 0x%x !' %(self.comMemWriteUnit))
+                return
+            eraseMemStart = misc.align_down(memStart, memEraseUnit)
+            eraseMemEnd = misc.align_up(memStart + os.path.getsize(memBinFile), memEraseUnit)
+            status, results, cmdStr = self.blhost.flashEraseRegion(eraseMemStart, eraseMemEnd - eraseMemStart, rundef.kBootDeviceMemId_FlexspiNor)
+            if status != boot.status.kStatus_Success:
+                self.popupMsgBox('Failed to erase Flash, error code is %d !' %(status))
+                return
+            shutil.copy(memBinFile, tempMemFile)
+            status, results, cmdStr = self.blhost.writeMemory(memStart, tempMemFile, rundef.kBootDeviceMemId_FlexspiNor)
+            try:
+                os.remove(tempMemFile)
+            except:
+                pass
+            if status != boot.status.kStatus_Success:
+                self.popupMsgBox('Failed to download file into Flash, error code is %d, You may forget to erase Flash first!' %(status))
