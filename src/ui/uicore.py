@@ -61,6 +61,10 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         toolCommDict = uivar.getAdvancedSettings(uidef.kAdvancedSettings_Tool)
         self.toolCommDict = toolCommDict.copy()
 
+        self.imgFolder = os.path.join(self.exeTopRoot, 'img')
+        self.appPictureFile = os.path.join(self.imgFolder, 'app.png')
+        self.bootPictureFile = os.path.join(self.imgFolder, 'boot.png')
+
         self.mcuDevice = None
         self._initTargetSetupValue()
         self.xspiInstance = 0
@@ -102,6 +106,24 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.usbhidToConnect = [None] * 2
         self.blMode = None
         self._initBlModeValue()
+
+    def showImagePiture( self, picType = 'app' ):
+        if picType == 'app':
+            path = self.appPictureFile
+        elif picType == 'boot':
+            path = self.bootPictureFile
+        else:
+            pass
+        pix = QPixmap(path)
+        if pix.isNull():
+            return
+        self._scene = QGraphicsScene(self.graphicsView_layout) 
+        self.graphicsView_layout.setScene(self._scene)
+        self.graphicsView_layout.scene().clear()
+        self._pix = self.graphicsView_layout.scene().addPixmap(pix)
+        self._pix.setTransformationMode(Qt.SmoothTransformation)
+        self.graphicsView_layout.scene().setSceneRect(QRectF(pix.rect()))
+        self.graphicsView_layout.fitInView(self.graphicsView_layout.sceneRect(), Qt.KeepAspectRatio)
 
     def showAboutMessage( self, myTitle, myContent):
         QMessageBox.about(self, myTitle, myContent )

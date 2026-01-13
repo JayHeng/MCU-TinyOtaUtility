@@ -17,7 +17,6 @@ warnings.filterwarnings(
     message=r".*sipPyTypeDict\(\).*"
 )
 
-
 g_main_win = None
 
 kRetryPingTimes = 2
@@ -82,6 +81,9 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.pushButton_stage1BlFile.clicked.connect(self.callbackBrowseS1BL)
         self.pushButton_appSlot0File.clicked.connect(self.callbackBrowseAPP0)
         self.pushButton_appSlot1File.clicked.connect(self.callbackBrowseAPP1)
+        self.pushButton_makeS1BL.clicked.connect(self.callbackMakeS1BL)
+        self.pushButton_makeAPP0.clicked.connect(self.callbackMakeAPP0)
+        self.pushButton_makeAPP1.clicked.connect(self.callbackMakeAPP1)
         self.pushButton_downloadS0BL.clicked.connect(self.callbackDownloadS0BL)
         self.pushButton_downloadS1BL.clicked.connect(self.callbackDownloadS1BL)
         self.pushButton_downloadAPP0.clicked.connect(self.callbackDownloadAPP0)
@@ -262,6 +264,13 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.updateOtaOperateStatus(fileType, 1)
         self.downloadOtaFile(fileType)
         self.updateOtaOperateStatus(fileType, 0)
+
+    def callbackMakeS1BL( self ):
+        self.showImagePiture('boot')
+    def callbackMakeAPP0( self ):
+        self.showImagePiture('app')
+    def callbackMakeAPP1( self ):
+        self.showImagePiture('app')
 
     def callbackDownloadS0BL( self ):
         self._downloadOtaFile(uidef.kOtaFileType_S0BL)
