@@ -350,6 +350,9 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             if operate == 'erase':
                 self.pushButton_erase.setStyleSheet("background-color: yellow;")
                 self.pushButton_erase.setEnabled(False)
+            elif operate == 'eraseChip':
+                self.pushButton_eraseChip.setStyleSheet("background-color: yellow;")
+                self.pushButton_eraseChip.setEnabled(False)
             elif operate == 'read':
                 self.pushButton_read.setStyleSheet("background-color: yellow;")
                 self.pushButton_read.setEnabled(False)
@@ -361,6 +364,8 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         elif state == 0:
             self.pushButton_erase.setStyleSheet("background-color: white;")
             self.pushButton_erase.setEnabled(True)
+            self.pushButton_eraseChip.setStyleSheet("background-color: white;")
+            self.pushButton_eraseChip.setEnabled(True)
             self.pushButton_read.setStyleSheet("background-color: white;")
             self.pushButton_read.setEnabled(True)
             self.pushButton_write.setStyleSheet("background-color: white;")

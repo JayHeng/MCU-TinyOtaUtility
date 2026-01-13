@@ -36,6 +36,8 @@ class memOperateWorker(QObject):
         try:
             if self._task == 'erase':
                 self._owner.eraseXspiFlashMemory()
+            elif self._task == 'eraseChip':
+                self._owner.massEraseXspiFlashMemory()
             elif self._task == 'write':
                 self._owner.writeXspiFlashMemory()
             self.finished.emit()
@@ -67,6 +69,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.pushButton_read.clicked.connect(self.callbackReadMem)
         self.pushButton_write.clicked.connect(self.callbackWriteMem)
         self.pushButton_erase.clicked.connect(self.callbackEraseMem)
+        self.pushButton_eraseChip.clicked.connect(self.callbackEraseMemChip)
         self.pushButton_browseFile.clicked.connect(self.callbackBrowseFile)
 
     def _setupMcuTargets( self ):
@@ -205,6 +208,14 @@ class tinyOtaMain(memcore.tinyOtaMem):
         if self.connectStage == uidef.kConnectStage_Reset:
             self.accessMemType = 'erase'
             self.getUserComMemParameters(False)
+            self.updateMemOperateStatus(self.accessMemType, 1)
+            self._startMemOperateTask(self.accessMemType)
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
+
+    def callbackEraseMemChip( self ):
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self.accessMemType = 'eraseChip'
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
         else:

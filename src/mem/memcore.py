@@ -143,6 +143,11 @@ class tinyOtaMem(runcore.tinyOtaRun):
             if status != boot.status.kStatus_Success:
                 self.popupMsgBox('Failed to erase Flash, error code is %d !' %(status))
 
+    def massEraseXspiFlashMemory( self ):
+        status, results, cmdStr = self.blhost.flashEraseAll(rundef.kBootDeviceMemId_FlexspiNor)
+        if status != boot.status.kStatus_Success:
+            self.popupMsgBox('Failed to mass erase Flash, error code is %d !' %(status))
+
     def writeXspiFlashMemory( self ):
         #status, memStart, memBinFile, useFlashImageCmd = self.getUserComMemParameters(True)
         status = self.memParamStatus
