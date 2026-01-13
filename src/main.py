@@ -10,6 +10,14 @@ from ui import uilang
 from ui import uivar
 from mem import memcore
 
+import warnings
+warnings.filterwarnings(
+    "ignore",
+    category=DeprecationWarning,
+    message=r".*sipPyTypeDict\(\).*"
+)
+
+
 g_main_win = None
 
 kRetryPingTimes = 2
