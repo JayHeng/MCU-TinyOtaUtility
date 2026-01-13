@@ -591,7 +591,7 @@
        <x>10</x>
        <y>170</y>
        <width>451</width>
-       <height>261</height>
+       <height>231</height>
       </rect>
      </property>
      <property name="font">
@@ -623,28 +623,29 @@
     <widget class="QPushButton" name="pushButton_erase">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>140</x>
        <y>470</y>
-       <width>51</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
      <property name="font">
       <font>
+       <family>MS Shell Dlg 2</family>
        <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Erase</string>
+      <string>Range Erase</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_read">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>340</x>
        <y>470</y>
-       <width>51</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
@@ -655,15 +656,15 @@
       </font>
      </property>
      <property name="text">
-      <string>Read</string>
+      <string>Range Read</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_write">
      <property name="geometry">
       <rect>
-       <x>70</x>
+       <x>240</x>
        <y>470</y>
-       <width>51</width>
+       <width>91</width>
        <height>31</height>
       </rect>
      </property>
@@ -674,14 +675,14 @@
       </font>
      </property>
      <property name="text">
-      <string>Write</string>
+      <string>Write File</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_rangeStart">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>440</y>
+       <y>410</y>
        <width>121</width>
        <height>16</height>
       </rect>
@@ -699,8 +700,8 @@
     <widget class="QLabel" name="label_rangeLength">
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>440</y>
+       <x>240</x>
+       <y>410</y>
        <width>131</width>
        <height>16</height>
       </rect>
@@ -719,7 +720,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>440</y>
+       <y>410</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -734,8 +735,8 @@
     <widget class="QLineEdit" name="lineEdit_rangeLength">
      <property name="geometry">
       <rect>
-       <x>360</x>
-       <y>440</y>
+       <x>370</x>
+       <y>410</y>
        <width>81</width>
        <height>20</height>
       </rect>
@@ -750,10 +751,10 @@
     <widget class="QPushButton" name="pushButton_browseFile">
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>470</y>
+       <x>8</x>
+       <y>439</y>
        <width>101</width>
-       <height>31</height>
+       <height>26</height>
       </rect>
      </property>
      <property name="font">
@@ -770,10 +771,10 @@
     <widget class="QLineEdit" name="lineEdit_browseFile">
      <property name="geometry">
       <rect>
-       <x>293</x>
-       <y>471</y>
-       <width>169</width>
-       <height>29</height>
+       <x>110</x>
+       <y>440</y>
+       <width>351</width>
+       <height>24</height>
       </rect>
      </property>
      <property name="text">
@@ -1361,10 +1362,10 @@
     <widget class="QLabel" name="label_sourceFilePath">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>110</x>
        <y>10</y>
        <width>141</width>
-       <height>20</height>
+       <height>16</height>
       </rect>
      </property>
      <property name="font">
@@ -1405,6 +1406,26 @@
        <width>241</width>
        <height>331</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_eraseChip">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>470</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>MS Shell Dlg 2</family>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Chip Erase</string>
      </property>
     </widget>
    </widget>
