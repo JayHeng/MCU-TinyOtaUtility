@@ -269,7 +269,28 @@ class tinyOtaMain(memcore.tinyOtaMem):
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         uivar.deinitVar()
 
+    def _stopThreads(self):
+        if self.memOperateWorker:
+            self.memOperateWorker.stop()
+        if self.memOperateThread:
+            self.memOperateThread.quit()
+            if not self.memOperateThread.wait(2000):
+                self.memOperateThread.terminate()
+                self.memOperateThread.wait()
+        self.memOperateWorker = None
+        self.memOperateThread = None
+        if self._tickWorker:
+            self._tickWorker.stop()
+        if self._tickThread:
+            self._tickThread.quit()
+            if not self._tickThread.wait(2000):
+                self._tickThread.terminate()
+                self._tickThread.wait()
+        self._tickWorker = None
+        self._tickThread = None
+
     def closeEvent(self, event):
+        self._stopThreads()
         self._deinitToolToExit()
         event.accept()
 
