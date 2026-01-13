@@ -11,7 +11,6 @@ from ui import uivar
 from mem import memcore
 
 g_main_win = None
-g_task_detectUsbhid = None
 
 kRetryPingTimes = 2
 
@@ -260,10 +259,6 @@ if __name__ == '__main__':
     g_main_win = tinyOtaMain(None)
     g_main_win.setWindowTitle(u"MCU Tiny OTA Utility v1.0")
     g_main_win.show()
-
-    g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)
-    g_task_detectUsbhid.setDaemon(True)
-    g_task_detectUsbhid.start()
 
     sys.exit(app.exec_())
 

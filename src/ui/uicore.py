@@ -25,12 +25,31 @@ from utils import misc
 
 kRetryDetectTimes = 2
 
+class TickWorker(QObject):
+    tick = pyqtSignal()
+    finished = pyqtSignal()
+    def __init__(self, interval_sec=1):
+        super().__init__()
+        self._interval = max(1, int(interval_sec))
+        self._stop = False
+    @pyqtSlot()
+    def run(self):
+        try:
+            while not self._stop:
+                self.tick.emit()
+                QThread.sleep(self._interval)
+        finally:
+            self.finished.emit()
+    @pyqtSlot()
+    def stop(self): self._stop = True
+
 class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
     def __init__(self, parent=None):
         super(tinyOtaUi, self).__init__(parent)
         self.setupUi(self)
         self._initMemWinProperty()
+        self._initTickThread()
 
         self.exeBinRoot = os.getcwd()
         self.exeTopRoot = os.path.dirname(self.exeBinRoot)
@@ -52,6 +71,17 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.norFlashModel = None
         self._initNorFlashModelValue()
         self.initFuncUi()
+
+    def _initTickThread( self ):
+        self._tickThread = QThread(self)
+        self._tickWorker = TickWorker(interval_sec=1)
+        self._tickWorker.moveToThread(self._tickThread)
+        self._tickThread.started.connect(self._tickWorker.run)
+        self._tickWorker.tick.connect(lambda: self.task_doDetectUsbhid())
+        self._tickWorker.finished.connect(self._tickThread.quit)
+        self._tickWorker.finished.connect(self._tickWorker.deleteLater)
+        self._tickThread.finished.connect(self._tickThread.deleteLater)
+        self._tickThread.start()
 
     def _initMemWinProperty( self ):
         font = QFont()
@@ -228,10 +258,8 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.setPortSetupValue(self.connectStage, usbIdList)
 
     def task_doDetectUsbhid( self ):
-        while True:
-            if self.isUsbhidPortSelected:
-                self._retryToDetectUsbhidDevice(False)
-            time.sleep(1)
+        if self.isUsbhidPortSelected:
+            self._retryToDetectUsbhidDevice(False)
 
     def _retryToDetectUsbhidDevice( self, needToRetry = True ):
         usbVid = [None]
