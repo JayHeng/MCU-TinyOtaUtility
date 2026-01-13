@@ -34,9 +34,7 @@ class memOperateWorker(QObject):
     def run(self):
         self.started.emit()
         try:
-            if self._task == 'read':
-                self._owner.readXspiFlashMemory()
-            elif self._task == 'erase':
+            if self._task == 'erase':
                 self._owner.eraseXspiFlashMemory()
             elif self._task == 'write':
                 self._owner.writeXspiFlashMemory()
@@ -196,14 +194,17 @@ class tinyOtaMain(memcore.tinyOtaMem):
     def callbackReadMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             self.accessMemType = 'read'
+            self.getUserComMemParameters(False)
             self.updateMemOperateStatus(self.accessMemType, 1)
-            self._startMemOperateTask(self.accessMemType)
+            self.readXspiFlashMemory()
+            self.updateMemOperateStatus(self.accessMemType, 0),
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
 
     def callbackEraseMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             self.accessMemType = 'erase'
+            self.getUserComMemParameters(False)
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
         else:
@@ -212,6 +213,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
     def callbackWriteMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
             self.accessMemType = 'write'
+            self.getUserComMemParameters(True)
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
         else:

@@ -21,6 +21,13 @@ class tinyOtaMem(runcore.tinyOtaRun):
         self.userFolder = os.path.join(self.exeTopRoot, 'gen', 'user_file')
         self.userFilename = os.path.join(self.exeTopRoot, 'gen', 'user_file', 'user.dat')
 
+        self.memParamStatus = None
+        self.memParamStart = None
+        self.memParamLength = None
+        self.memParamBinFile = None
+        self.memParamDummyArg = None
+        self.memParamUseFlashImageCmd = None
+
     def getOneLineContentToShow( self, addr, memLeft, fileObj ):
         pad_bytes_before = addr % 16
         content_to_show = self.getFormattedUpperHexValue(addr - pad_bytes_before) + '    '
@@ -44,7 +51,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
             mem_content_bytes = ''.join(chr(x) for x in mem_bytes)
         return content_to_show, mem_content_bytes
 
-    def _getUserComMemParameters( self, isMemWrite=False ):
+    def getUserComMemParameters( self, isMemWrite=False ):
         status = False
         memStart = 0
         memLength = 0
@@ -68,7 +75,13 @@ class tinyOtaMem(runcore.tinyOtaRun):
             status, memStart = self.getComMemStartAddress()
             if status:
                 status, memFlexibleArg = self.getComMemByteLength()
-        return status, memStart, memFlexibleArg, useFlashImageCmd
+
+        self.memParamStatus = status
+        self.memParamStart = memStart
+        self.memParamLength = memFlexibleArg
+        self.memParamBinFile = memFlexibleArg
+        self.memParamDummyArg = useFlashImageCmd
+        self.memParamUseFlashImageCmd = useFlashImageCmd
 
     def _convertComMemStart( self, memStart ):
         if memStart < self.tgt.flexspiNorMemBase:
@@ -85,7 +98,11 @@ class tinyOtaMem(runcore.tinyOtaRun):
         return eraseUnit
 
     def readXspiFlashMemory( self ):
-        status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
+        #status, memStart, memLength, dummyArg = self.getUserComMemParameters(False)
+        status = self.memParamStatus
+        memStart = self.memParamStart
+        memLength = self.memParamLength
+        dummyArg = self.memParamDummyArg
         if status:
             memStart = self._convertComMemStart(memStart)
             alignedMemStart = misc.align_down(memStart, self.comMemReadUnit)
@@ -110,7 +127,11 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 self.popupMsgBox('Failed to read Flash, error code is %d !' %(status))
 
     def eraseXspiFlashMemory( self ):
-        status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
+        #status, memStart, memLength, dummyArg = self.getUserComMemParameters(False)
+        status = self.memParamStatus
+        memStart = self.memParamStart
+        memLength = self.memParamLength
+        dummyArg = self.memParamDummyArg
         if status:
             memStart = self._convertComMemStart(memStart)
             memEraseUnit = self.convertComMemEraseUnit(self.comMemEraseUnit)
@@ -123,7 +144,11 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 self.popupMsgBox('Failed to erase Flash, error code is %d !' %(status))
 
     def writeXspiFlashMemory( self ):
-        status, memStart, memBinFile, useFlashImageCmd = self._getUserComMemParameters(True)
+        #status, memStart, memBinFile, useFlashImageCmd = self.getUserComMemParameters(True)
+        status = self.memParamStatus
+        memStart = self.memParamStart
+        memBinFile = self.memParamBinFile
+        useFlashImageCmd = self.memParamUseFlashImageCmd
         if status:
             if useFlashImageCmd:
                 memBinFilepath, memBinfilename = os.path.split(memBinFile)
