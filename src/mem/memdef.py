@@ -5,7 +5,7 @@ kAppImageFileExtensionList_S19 = ['.srec', '.s19', '.mot', '.mxt', '.m32', '.s28
 kAppImageFileExtensionList_Hex = ['.hex']
 kAppImageFileExtensionList_Bin = ['.bin']
 
-kImageAuthType_CRC32  = 0
+kImageAuthType_CRC32  = 0x0000
 
 kImageHeaderWordOffset_Length   = 8
 kImageHeaderWordOffset_AuthType = 9

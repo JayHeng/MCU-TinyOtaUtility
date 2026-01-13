@@ -410,6 +410,10 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.lineEdit_fileStartS1BL.setText(self.toolCommDict['fileStartS1BL'])
         self.lineEdit_fileStartAPP0.setText(self.toolCommDict['fileStartAPP0'])
         self.lineEdit_fileStartAPP1.setText(self.toolCommDict['fileStartAPP1'])
+        self.lineEdit_app0VerMajor.setText(self.toolCommDict['app0VersionH'])
+        self.lineEdit_app0VerMinor.setText(self.toolCommDict['app0VersionL'])
+        self.lineEdit_app1VerMajor.setText(self.toolCommDict['app1VersionH'])
+        self.lineEdit_app1VerMinor.setText(self.toolCommDict['app1VersionL'])
         self.lineEdit_rangeStart.setText(self.toolCommDict['rangeStart'])
         self.lineEdit_rangeLength.setText(self.toolCommDict['rangeLength'])
         self.lineEdit_browseFile.setText(self.toolCommDict['memFile'])
@@ -658,6 +662,30 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
                 pass
         else:
             pass
+
+    def getAppVersion( self, appIndex = 0 ):
+        version = None
+        if appIndex == 0:
+            self.toolCommDict['app0VersionH'] = self.lineEdit_app0VerMajor.text()
+            self.toolCommDict['app0VersionL'] = self.lineEdit_app0VerMinor.text()
+            major = self.toolCommDict['app0VersionH']
+            minor = self.toolCommDict['app0VersionL']
+        elif appIndex == 1:
+            self.toolCommDict['app1VersionH'] = self.lineEdit_app1VerMajor.text()
+            self.toolCommDict['app1VersionL'] = self.lineEdit_app1VerMinor.text()
+            major = self.toolCommDict['app1VersionH']
+            minor = self.toolCommDict['app1VersionL']
+        else:
+            pass
+        try:
+            if int(major) > 255 or int(minor) > 255:
+                self.popupMsgBox('Version Major/Minor should be less than 256')
+            else:
+                version = (int(major) << 8) + int(minor)
+        except:
+            self.popupMsgBox('Version Major/Minor format error, it should be 0-255')
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
+        return version
 
     def printMem( self , memStr ):
         self.textEdit_memWin.append(memStr)

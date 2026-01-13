@@ -197,15 +197,21 @@ class tinyOtaMem(runcore.tinyOtaRun):
         if fileType == uidef.kOtaFileType_S1BL:
             pass
         elif fileType == uidef.kOtaFileType_APP0:
+            version = self.getAppVersion(0)
+            if version == None:
+                return
             shutil.copy(self.appSlot0File, self.appSlot0FileTemp)
             self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
-            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, memdef.kImageAuthType_CRC32)
+            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
             self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32, 0x0)
             self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
         elif fileType == uidef.kOtaFileType_APP1:
+            version = self.getAppVersion(1)
+            if version == None:
+                return
             shutil.copy(self.appSlot1File, self.appSlot1FileTemp)
             self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
-            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, memdef.kImageAuthType_CRC32)
+            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
             self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32, 0x0)
             self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
         else:
