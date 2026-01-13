@@ -33,11 +33,11 @@ class memOperateWorker(QObject):
     def run(self):
         self.started.emit()
         try:
-            if self._task == 'erase':
+            if self._task == uidef.kCommMemOperation_Erase:
                 self._owner.eraseXspiFlashMemory()
-            elif self._task == 'eraseChip':
+            elif self._task == uidef.kCommMemOperation_EraseChip:
                 self._owner.massEraseXspiFlashMemory()
-            elif self._task == 'write':
+            elif self._task == uidef.kCommMemOperation_Write:
                 self._owner.writeXspiFlashMemory()
             self.finished.emit()
         except Exception as e:
@@ -203,7 +203,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
 
     def callbackReadMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            self.accessMemType = 'read'
+            self.accessMemType = uidef.kCommMemOperation_Read
             self.getUserComMemParameters(False)
             self.updateMemOperateStatus(self.accessMemType, 1)
             self.readXspiFlashMemory()
@@ -213,7 +213,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
 
     def callbackEraseMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            self.accessMemType = 'erase'
+            self.accessMemType = uidef.kCommMemOperation_Erase
             self.getUserComMemParameters(False)
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
@@ -222,7 +222,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
 
     def callbackEraseMemChip( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            self.accessMemType = 'eraseChip'
+            self.accessMemType = uidef.kCommMemOperation_EraseChip
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
         else:
@@ -233,7 +233,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
 
     def callbackWriteMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
-            self.accessMemType = 'write'
+            self.accessMemType = uidef.kCommMemOperation_Write
             self.getUserComMemParameters(True)
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
@@ -241,34 +241,28 @@ class tinyOtaMain(memcore.tinyOtaMem):
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
 
     def callbackBrowseS0BL( self ):
-        self.browseOtaFile('stage0Bl')
+        self.browseOtaFile(uidef.kOtaFileType_S0BL)
     def callbackBrowseS1BL( self ):
-        self.browseOtaFile('stage1Bl')
+        self.browseOtaFile(uidef.kOtaFileType_S1BL)
     def callbackBrowseAPP0( self ):
-        self.browseOtaFile('appSlot0')
+        self.browseOtaFile(uidef.kOtaFileType_APP0)
     def callbackBrowseAPP1( self ):
-        self.browseOtaFile('appSlot1')
+        self.browseOtaFile(uidef.kOtaFileType_APP1)
+
+    def _downloadOtaFile( self, fileType ):
+        self.getOtaFileStartAddress(fileType)
+        self.updateOtaOperateStatus(fileType, 1)
+        self.downloadOtaFile(fileType)
+        self.updateOtaOperateStatus(fileType, 0)
 
     def callbackDownloadS0BL( self ):
-        self.getOtaFileStartAddress('stage0Bl')
-        self.updateOtaOperateStatus('stage0Bl', 1)
-        self.downloadOtaFile('stage0Bl')
-        self.updateOtaOperateStatus('stage0Bl', 0)
+        self._downloadOtaFile(uidef.kOtaFileType_S0BL)
     def callbackDownloadS1BL( self ):
-        self.getOtaFileStartAddress('stage1Bl')
-        self.updateOtaOperateStatus('stage1Bl', 1)
-        self.downloadOtaFile('stage1Bl')
-        self.updateOtaOperateStatus('stage1Bl', 0)
+        self._downloadOtaFile(uidef.kOtaFileType_S1BL)
     def callbackDownloadAPP0( self ):
-        self.getOtaFileStartAddress('appSlot0')
-        self.updateOtaOperateStatus('appSlot0', 1)
-        self.downloadOtaFile('appSlot0')
-        self.updateOtaOperateStatus('appSlot0', 0)
+        self._downloadOtaFile(uidef.kOtaFileType_APP0)
     def callbackDownloadAPP1( self ):
-        self.getOtaFileStartAddress('appSlot1')
-        self.updateOtaOperateStatus('appSlot1', 1)
-        self.downloadOtaFile('appSlot1')
-        self.updateOtaOperateStatus('appSlot1', 0)
+        self._downloadOtaFile(uidef.kOtaFileType_APP1)
 
     def _deinitToolToExit( self ):
         self.updateXspiNorOptValue()

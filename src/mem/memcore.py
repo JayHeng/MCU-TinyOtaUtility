@@ -195,16 +195,16 @@ class tinyOtaMem(runcore.tinyOtaRun):
 
     def downloadOtaFile( self, fileType = 'stage0Bl' ):
         memStart = self.otaMemStart
-        if fileType == 'stage0Bl':
+        if fileType == uidef.kOtaFileType_S0BL:
             memBinFile = self.stage0BlFile
             tempMemFile = self.stage0BlFileTemp
-        elif fileType == 'stage1Bl':
+        elif fileType == uidef.kOtaFileType_S1BL:
             memBinFile = self.stage1BlFile
             tempMemFile = self.stage1BlFileTemp
-        elif fileType == 'appSlot0':
+        elif fileType == uidef.kOtaFileType_APP0:
             memBinFile = self.appSlot0File
             tempMemFile = self.appSlot0FileTemp
-        elif fileType == 'appSlot1':
+        elif fileType == uidef.kOtaFileType_APP1:
             memBinFile = self.appSlot1File
             tempMemFile = self.appSlot1FileTemp
         else:

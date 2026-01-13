@@ -375,16 +375,16 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
     def updateMemOperateStatus( self, operate, state=0 ):
         if state == 1:
-            if operate == 'erase':
+            if operate == uidef.kCommMemOperation_Erase:
                 self.pushButton_erase.setStyleSheet("background-color: yellow;")
                 self.pushButton_erase.setEnabled(False)
-            elif operate == 'eraseChip':
+            elif operate == uidef.kCommMemOperation_EraseChip:
                 self.pushButton_eraseChip.setStyleSheet("background-color: yellow;")
                 self.pushButton_eraseChip.setEnabled(False)
-            elif operate == 'read':
+            elif operate == uidef.kCommMemOperation_Read:
                 self.pushButton_read.setStyleSheet("background-color: yellow;")
                 self.pushButton_read.setEnabled(False)
-            elif operate == 'write':
+            elif operate == uidef.kCommMemOperation_Write:
                 self.pushButton_write.setStyleSheet("background-color: yellow;")
                 self.pushButton_write.setEnabled(False)
             else:
@@ -509,13 +509,13 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         status = False
         val32 = None
         self.otaMemStart = None
-        if fileType == 'stage0Bl':
+        if fileType == uidef.kOtaFileType_S0BL:
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartS0BL.text())
-        elif fileType == 'stage1Bl':
+        elif fileType == uidef.kOtaFileType_S1BL:
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartS1BL.text())
-        elif fileType == 'appSlot0':
+        elif fileType == uidef.kOtaFileType_APP0:
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartAPP0.text())
-        elif fileType == 'appSlot1':
+        elif fileType == uidef.kOtaFileType_APP1:
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartAPP1.text())
         else:
             pass
@@ -527,16 +527,16 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             self, "Select Data File", "", "All (*);;BIN (*.bin)"
         )
         if path:
-            if fileType == 'stage0Bl':
+            if fileType == uidef.kOtaFileType_S0BL:
                 self.lineEdit_stage0BlFile.setText(path)
                 self.stage0BlFile = path
-            elif fileType == 'stage1Bl':
+            elif fileType == uidef.kOtaFileType_S1BL:
                 self.lineEdit_stage1BlFile.setText(path)
                 self.stage1BlFile = path
-            elif fileType == 'appSlot0':
+            elif fileType == uidef.kOtaFileType_APP0:
                 self.lineEdit_appSlot0File.setText(path)
                 self.appSlot0File = path
-            elif fileType == 'appSlot1':
+            elif fileType == uidef.kOtaFileType_APP1:
                 self.lineEdit_appSlot1File.setText(path)
                 self.appSlot1File = path
             else:
@@ -544,16 +544,16 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
 
     def updateOtaOperateStatus( self, operate, state=0 ):
         if state == 1:
-            if operate == 'stage0Bl':
+            if operate == uidef.kOtaFileType_S0BL:
                 self.pushButton_downloadS0BL.setStyleSheet("background-color: yellow;")
                 self.pushButton_downloadS0BL.setEnabled(False)
-            elif operate == 'stage1Bl':
+            elif operate == uidef.kOtaFileType_S1BL:
                 self.pushButton_downloadS1BL.setStyleSheet("background-color: yellow;")
                 self.pushButton_downloadS1BL.setEnabled(False)
-            elif operate == 'appSlot0':
+            elif operate == uidef.kOtaFileType_APP0:
                 self.pushButton_downloadAPP0.setStyleSheet("background-color: yellow;")
                 self.pushButton_downloadAPP0.setEnabled(False)
-            elif operate == 'appSlot1':
+            elif operate == uidef.kOtaFileType_APP1:
                 self.pushButton_downloadAPP1.setStyleSheet("background-color: yellow;")
                 self.pushButton_downloadAPP1.setEnabled(False)
             else:

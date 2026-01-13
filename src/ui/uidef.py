@@ -95,3 +95,15 @@ kAdvancedSettings_Tool             = 0
 kButtonColor_Enable  = "rgb(142,229,238)"
 kButtonColor_Disable = "rgb(248,248,255)"
 
+
+####################################################################
+
+kCommMemOperation_Read      = 'read'
+kCommMemOperation_Write     = 'write'
+kCommMemOperation_Erase     = 'erase'
+kCommMemOperation_EraseChip = 'eraseChip'
+
+kOtaFileType_S0BL = 'stage0Bl'
+kOtaFileType_S1BL = 'stage1Bl'
+kOtaFileType_APP0 = 'appSlot0'
+kOtaFileType_APP1 = 'appSlot1'
