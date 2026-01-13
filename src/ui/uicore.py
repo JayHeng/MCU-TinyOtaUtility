@@ -9,6 +9,7 @@
 import sys
 import os
 import time
+import struct
 import serial.tools.list_ports
 import pywinusb.hid
 from PyQt5.Qt import *
@@ -624,6 +625,37 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             self.pushButton_downloadAPP0.setEnabled(True)
             self.pushButton_downloadAPP1.setStyleSheet("background-color: white;")
             self.pushButton_downloadAPP1.setEnabled(True)
+        else:
+            pass
+
+    def replaceWordInFile(self, path: str, offset: int, value: int):
+        try:
+            byte_offset = offset * 4
+            with open(path, 'r+b') as f:
+                f.seek(byte_offset)
+                f.write(struct.pack('<I', value))
+        except Exception as e:
+            pass
+
+    def updateOtaMakeStatus( self, operate, state=0 ):
+        if state == 1:
+            if operate == uidef.kOtaFileType_S1BL:
+                self.pushButton_makeS1BL.setStyleSheet("background-color: green;")
+            elif operate == uidef.kOtaFileType_APP0:
+                self.pushButton_makeAPP0.setStyleSheet("background-color: green;")
+            elif operate == uidef.kOtaFileType_APP1:
+                self.pushButton_makeAPP1.setStyleSheet("background-color: green;")
+            else:
+                pass
+        elif state == 0:
+            if operate == uidef.kOtaFileType_S1BL:
+                self.pushButton_makeS1BL.setStyleSheet("background-color: white;")
+            elif operate == uidef.kOtaFileType_APP0:
+                self.pushButton_makeAPP0.setStyleSheet("background-color: white;")
+            elif operate == uidef.kOtaFileType_APP1:
+                self.pushButton_makeAPP1.setStyleSheet("background-color: white;")
+            else:
+                pass
         else:
             pass
 

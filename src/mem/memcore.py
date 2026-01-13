@@ -193,6 +193,24 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 if status != boot.status.kStatus_Success:
                     self.popupMsgBox('Failed to write Flash, error code is %d, You may forget to erase Flash first!' %(status))
 
+    def makeOtaFile( self, fileType = 'stage1Bl' ):
+        if fileType == uidef.kOtaFileType_S1BL:
+            pass
+        elif fileType == uidef.kOtaFileType_APP0:
+            shutil.copy(self.appSlot0File, self.appSlot0FileTemp)
+            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
+            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, memdef.kImageAuthType_CRC32)
+            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32, 0x0)
+            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+        elif fileType == uidef.kOtaFileType_APP1:
+            shutil.copy(self.appSlot1File, self.appSlot1FileTemp)
+            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
+            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, memdef.kImageAuthType_CRC32)
+            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32, 0x0)
+            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+        else:
+            return
+
     def downloadOtaFile( self, fileType = 'stage0Bl' ):
         memStart = self.otaMemStart
         if fileType == uidef.kOtaFileType_S0BL:
@@ -221,7 +239,8 @@ class tinyOtaMem(runcore.tinyOtaRun):
             if status != boot.status.kStatus_Success:
                 self.popupMsgBox('Failed to erase Flash, error code is %d !' %(status))
                 return
-            shutil.copy(memBinFile, tempMemFile)
+            if not os.path.isfile(tempMemFile):
+                shutil.copy(memBinFile, tempMemFile)
             status, results, cmdStr = self.blhost.writeMemory(memStart, tempMemFile, rundef.kBootDeviceMemId_FlexspiNor)
             try:
                 os.remove(tempMemFile)
