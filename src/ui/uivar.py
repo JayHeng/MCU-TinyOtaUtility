@@ -16,6 +16,17 @@ g_toolCommDict = {'mcuDevice':None,
                   'xspiNorOpt1':None,
                   'isUsbhidPortSelected':None,
                   'blMode':None,
+                  'stage0BlFile':None,
+                  'stage1BlFile':None,
+                  'appSlot0File':None,
+                  'appSlot1File':None,
+                  'fileStartS0BL':None,
+                  'fileStartS1BL':None,
+                  'fileStartAPP0':None,
+                  'fileStartAPP1':None,
+                  'rangeStart':None,
+                  'rangeLength':None,
+                  'memFile':None,
                  }
 
 def initVar(cfgFilename):
@@ -40,6 +51,17 @@ def initVar(cfgFilename):
                           'xspiNorOpt1':0x0,
                           'isUsbhidPortSelected':True,
                           'blMode':0,
+                          'stage0BlFile':'File Path',
+                          'stage1BlFile':'File Path',
+                          'appSlot0File':'File Path',
+                          'appSlot1File':'File Path',
+                          'fileStartS0BL':'0x0',
+                          'fileStartS1BL':'0x0',
+                          'fileStartAPP0':'0x0',
+                          'fileStartAPP1':'0x0',
+                          'rangeStart':'0x0',
+                          'rangeLength':'0x2000',
+                          'memFile':'File Path',
                          }
 
 def deinitVar(cfgFilename=None):

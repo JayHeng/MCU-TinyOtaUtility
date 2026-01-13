@@ -71,6 +71,7 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.norFlashModel = None
         self._initNorFlashModelValue()
         self.initFuncUi()
+        self._initMemOperateValues()
 
     def _initTickThread( self ):
         self._tickThread = QThread(self)
@@ -373,6 +374,24 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             return
         self.pushButton_connect.setStyleSheet("color: " + color + ";")
 
+    def _initMemOperateValues( self ):
+        self.lineEdit_stage0BlFile.setText(self.toolCommDict['stage0BlFile'])
+        self.stage0BlFile = self.toolCommDict['stage0BlFile']
+        self.lineEdit_stage1BlFile.setText(self.toolCommDict['stage1BlFile'])
+        self.stage1BlFile = self.toolCommDict['stage1BlFile']
+        self.lineEdit_appSlot0File.setText(self.toolCommDict['appSlot0File'])
+        self.appSlot0File = self.toolCommDict['appSlot0File']
+        self.lineEdit_appSlot1File.setText(self.toolCommDict['appSlot1File'])
+        self.appSlot1File = self.toolCommDict['appSlot1File']
+        self.lineEdit_fileStartS0BL.setText(self.toolCommDict['fileStartS0BL'])
+        self.lineEdit_fileStartS1BL.setText(self.toolCommDict['fileStartS1BL'])
+        self.lineEdit_fileStartAPP0.setText(self.toolCommDict['fileStartAPP0'])
+        self.lineEdit_fileStartAPP1.setText(self.toolCommDict['fileStartAPP1'])
+        self.lineEdit_rangeStart.setText(self.toolCommDict['rangeStart'])
+        self.lineEdit_rangeLength.setText(self.toolCommDict['rangeLength'])
+        self.lineEdit_browseFile.setText(self.toolCommDict['memFile'])
+        self.memBinFile = self.toolCommDict['memFile']
+
     def updateMemOperateStatus( self, operate, state=0 ):
         if state == 1:
             if operate == uidef.kCommMemOperation_Erase:
@@ -489,9 +508,13 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         return status, val32
 
     def getComMemStartAddress( self ):
+        self.toolCommDict['rangeStart'] = self.lineEdit_rangeStart.text()
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         return self.getVal32FromHexText(self.lineEdit_rangeStart.text())
 
     def getComMemByteLength( self ):
+        self.toolCommDict['rangeLength'] = self.lineEdit_rangeLength.text()
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         return self.getVal32FromHexText(self.lineEdit_rangeLength.text())
 
     def browseFile( self ):
@@ -500,7 +523,9 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         )
         if path:
             self.lineEdit_browseFile.setText(path)
+            self.toolCommDict['memFile'] = path
             self.memBinFile = path
+            uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
     def getComMemBinFile( self ):
         return self.memBinFile
@@ -510,15 +535,20 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         val32 = None
         self.otaMemStart = None
         if fileType == uidef.kOtaFileType_S0BL:
+            self.toolCommDict['fileStartS0BL'] = self.lineEdit_fileStartS0BL.text()
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartS0BL.text())
         elif fileType == uidef.kOtaFileType_S1BL:
+            self.toolCommDict['fileStartS1BL'] = self.lineEdit_fileStartS1BL.text()
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartS1BL.text())
         elif fileType == uidef.kOtaFileType_APP0:
+            self.toolCommDict['fileStartAPP0'] = self.lineEdit_fileStartAPP0.text()
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartAPP0.text())
         elif fileType == uidef.kOtaFileType_APP1:
+            self.toolCommDict['fileStartAPP1'] = self.lineEdit_fileStartAPP1.text()
             status, val32 = self.getVal32FromHexText(self.lineEdit_fileStartAPP1.text())
         else:
             pass
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         if status:
             self.otaMemStart = val32
         
@@ -529,18 +559,23 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         if path:
             if fileType == uidef.kOtaFileType_S0BL:
                 self.lineEdit_stage0BlFile.setText(path)
+                self.toolCommDict['stage0BlFile'] = path
                 self.stage0BlFile = path
             elif fileType == uidef.kOtaFileType_S1BL:
                 self.lineEdit_stage1BlFile.setText(path)
+                self.toolCommDict['stage1BlFile'] = path
                 self.stage1BlFile = path
             elif fileType == uidef.kOtaFileType_APP0:
                 self.lineEdit_appSlot0File.setText(path)
+                self.toolCommDict['appSlot0File'] = path
                 self.appSlot0File = path
             elif fileType == uidef.kOtaFileType_APP1:
                 self.lineEdit_appSlot1File.setText(path)
+                self.toolCommDict['appSlot1File'] = path
                 self.appSlot1File = path
             else:
                 pass
+            uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
     def updateOtaOperateStatus( self, operate, state=0 ):
         if state == 1:
