@@ -12,6 +12,8 @@ from ui import uidef
 from ui import uivar
 from ui import uilang
 from utils import misc
+from typing import Optional
+from crccheck.crc import Crc32Mpeg2
 
 class tinyOtaMem(runcore.tinyOtaRun):
 
@@ -193,6 +195,42 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 if status != boot.status.kStatus_Success:
                     self.popupMsgBox('Failed to write Flash, error code is %d, You may forget to erase Flash first!' %(status))
 
+    def calc_crc32_mpeg2_excluding_word(self, path: str, offset: int, chunk_size: int = 64 * 1024) -> int:
+        try:
+            file_size = os.path.getsize(path)
+        except FileNotFoundError:
+            return 0x0
+        skip_start = offset * 4
+        if skip_start >= file_size:
+            skip_start = None
+            skip_end = None
+        else:
+            skip_end = min(skip_start + 4, file_size)
+        crc = Crc32Mpeg2()
+        with open(path, "rb") as f:
+            pos = 0
+            while True:
+                chunk = f.read(chunk_size)
+                if not chunk:
+                    break
+                end_pos = pos + len(chunk)
+                if skip_start is None:
+                    crc.process(chunk)
+                else:
+                    if end_pos <= skip_start or pos >= skip_end:
+                        crc.process(chunk)
+                    else:
+                        if pos < skip_start:
+                            front_len = max(0, min(skip_start, end_pos) - pos)
+                            if front_len:
+                                crc.process(chunk[:front_len])
+                        if end_pos > skip_end:
+                            back_start = max(skip_end - pos, 0)
+                            if back_start < len(chunk):
+                                crc.process(chunk[back_start:])
+                pos = end_pos
+        return crc.final()
+
     def makeOtaFile( self, fileType = 'stage1Bl' ):
         if fileType == uidef.kOtaFileType_S1BL:
             pass
@@ -201,19 +239,21 @@ class tinyOtaMem(runcore.tinyOtaRun):
             if version == None:
                 return
             shutil.copy(self.appSlot0File, self.appSlot0FileTemp)
-            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
-            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
-            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32, 0x0)
-            self.replaceWordInFile(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+            crc32 = self.calc_crc32_mpeg2_excluding_word(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32)
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32, crc32)
         elif fileType == uidef.kOtaFileType_APP1:
             version = self.getAppVersion(1)
             if version == None:
                 return
             shutil.copy(self.appSlot1File, self.appSlot1FileTemp)
-            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
-            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
-            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32, 0x0)
-            self.replaceWordInFile(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+            crc32 = self.calc_crc32_mpeg2_excluding_word(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32)
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32, crc32)
         else:
             return
 

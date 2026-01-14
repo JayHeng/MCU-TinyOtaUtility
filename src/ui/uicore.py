@@ -632,7 +632,7 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         else:
             pass
 
-    def replaceWordInFile(self, path: str, offset: int, value: int):
+    def replace_word_in_binary(self, path: str, offset: int, value: int):
         try:
             byte_offset = offset * 4
             with open(path, 'r+b') as f:
