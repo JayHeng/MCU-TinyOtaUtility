@@ -3,7 +3,6 @@
 import sys
 import os
 import time
-import threading
 from PyQt5.Qt import *
 from ui import uidef
 from ui import uilang
@@ -24,6 +23,45 @@ kRetryPingTimes = 2
 kBootloaderType_Rom         = 0
 kBootloaderType_Flashloader = 1
 
+class otaWorkerBase(QObject):
+    finished = pyqtSignal(object)
+    def __init__(self, owner):
+        super().__init__(None)
+        self._owner = owner
+
+class otaWorkerS0BL(otaWorkerBase):
+    @pyqtSlot()
+    def run(self):
+        try:
+            self._owner.downloadOtaFile(uidef.kOtaFileType_S0BL)
+            self.finished.emit(None)
+        except Exception as e:
+            pass
+class otaWorkerS1BL(otaWorkerBase):
+    @pyqtSlot()
+    def run(self):
+        try:
+            self._owner.downloadOtaFile(uidef.kOtaFileType_S1BL)
+            self.finished.emit(None)
+        except Exception as e:
+            pass
+class otaWorkerAPP0(otaWorkerBase):
+    @pyqtSlot()
+    def run(self):
+        try:
+            self._owner.downloadOtaFile(uidef.kOtaFileType_APP0)
+            self.finished.emit(None)
+        except Exception as e:
+            pass
+class otaWorkerAPP1(otaWorkerBase):
+    @pyqtSlot()
+    def run(self):
+        try:
+            self._owner.downloadOtaFile(uidef.kOtaFileType_APP1)
+            self.finished.emit(None)
+        except Exception as e:
+            pass
+
 class memOperateWorker(QObject):
     started  = pyqtSignal()
     finished = pyqtSignal()
@@ -32,10 +70,6 @@ class memOperateWorker(QObject):
         super().__init__(None)
         self._owner = owner
         self._task  = task_file_type
-        self._stop  = False
-
-    def stop(self):
-        self._stop = True
 
     def run(self):
         self.started.emit()
@@ -66,6 +100,8 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.otaOperateThread = None
         self.otaOperateWorker = None
 
+        self._otaThreads = set()
+
     def _register_callbacks(self):
         self.menuHelpAction_homePage.triggered.connect(self.callbackShowHomePage)
         self.menuHelpAction_aboutAuthor.triggered.connect(self.callbackShowAboutAuthor)
@@ -92,6 +128,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.pushButton_downloadS1BL.clicked.connect(self.callbackDownloadS1BL)
         self.pushButton_downloadAPP0.clicked.connect(self.callbackDownloadAPP0)
         self.pushButton_downloadAPP1.clicked.connect(self.callbackDownloadAPP1)
+        self.pushButton_allInOne.clicked.connect(self.callbackAllInOne)
 
     def _setupMcuTargets( self ):
         self.setTargetSetupValue()
@@ -328,31 +365,94 @@ class tinyOtaMain(memcore.tinyOtaMem):
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
+    def _start_ota_worker(self, worker_obj, on_finished=None):
+        thread = QThread(self)
+        worker_obj.moveToThread(thread)
+        def cleanup(result=None):
+            thread.quit()
+            thread.wait()
+            worker_obj.deleteLater()
+            thread.deleteLater()
+            if thread in self._otaThreads:
+                self._otaThreads.remove(thread)
+            if on_finished:
+                on_finished(result)
+        thread.started.connect(worker_obj.run)
+        worker_obj.finished.connect(cleanup)
+        self._otaThreads.add(thread)
+        thread.start()
+        return worker_obj
+
+    def callbackAllInOne( self ):
+        self.initGauge()
+        self.task_startGauge()
+        worker_S1BL = otaWorkerS1BL(self)
+        def after_S1BL(res_S1BL):
+            self.updateOtaOperateStatus(uidef.kOtaFileType_S1BL, 2)
+            worker_APP0 = otaWorkerAPP0(self)
+            def after_APP0(res_APP0):
+                self.updateOtaOperateStatus(uidef.kOtaFileType_APP0, 2)
+                worker_APP1 = otaWorkerAPP1(self)
+                def after_APP1(res_APP1):
+                    self.updateOtaOperateStatus(uidef.kOtaFileType_APP1, 2)
+                    self.showImagePiture('all_single_core')
+                    self.deinitGauge()
+                if self.makeOtaFile(uidef.kOtaFileType_APP1):
+                    self.updateOtaMakeStatus(uidef.kOtaFileType_APP1, 1)
+                else:
+                    self.updateOtaMakeStatus(uidef.kOtaFileType_APP1, 0)
+                    return
+                self.getOtaFileStartAddress(uidef.kOtaFileType_APP1)
+                self.updateOtaOperateStatus(uidef.kOtaFileType_APP1, 1) 
+                self._start_ota_worker(worker_APP1, on_finished=after_APP1)
+            if self.makeOtaFile(uidef.kOtaFileType_APP0):
+                self.updateOtaMakeStatus(uidef.kOtaFileType_APP0, 1)
+            else:
+                self.updateOtaMakeStatus(uidef.kOtaFileType_APP0, 0)
+                return
+            self.getOtaFileStartAddress(uidef.kOtaFileType_APP0)
+            self.updateOtaOperateStatus(uidef.kOtaFileType_APP0, 1) 
+            self._start_ota_worker(worker_APP0, on_finished=after_APP0)
+        if self.makeOtaFile(uidef.kOtaFileType_S1BL):
+            self.updateOtaMakeStatus(uidef.kOtaFileType_S1BL, 1)
+        else:
+            self.updateOtaMakeStatus(uidef.kOtaFileType_S1BL, 0)
+            return
+        self.getOtaFileStartAddress(uidef.kOtaFileType_S1BL)
+        self.updateOtaOperateStatus(uidef.kOtaFileType_S1BL, 1)
+        self._start_ota_worker(worker_S1BL, on_finished=after_S1BL)
+
     def _deinitToolToExit( self ):
         self.updateXspiNorOptValue()
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         uivar.deinitVar()
 
     def _stopThreads(self):
-        if self.memOperateWorker:
-            self.memOperateWorker.stop()
-        if self.memOperateThread:
-            self.memOperateThread.quit()
-            if not self.memOperateThread.wait(2000):
-                self.memOperateThread.terminate()
-                self.memOperateThread.wait()
-        self.memOperateWorker = None
-        self.memOperateThread = None
+        try:
+            if self.memOperateWorker:
+                self.memOperateWorker.stop()
+            if self.memOperateThread:
+                self.memOperateThread.quit()
+                if not self.memOperateThread.wait(2000):
+                    self.memOperateThread.terminate()
+                    self.memOperateThread.wait()
+            self.memOperateWorker = None
+            self.memOperateThread = None
+        except:
+            pass
 
-        if self.otaOperateWorker:
-            self.otaOperateWorker.stop()
-        if self.otaOperateThread:
-            self.otaOperateThread.quit()
-            if not self.otaOperateThread.wait(2000):
-                self.otaOperateThread.terminate()
-                self.otaOperateThread.wait()
-        self.otaOperateWorker = None
-        self.otaOperateThread = None
+        try:
+            if self.otaOperateWorker:
+                self.otaOperateWorker.stop()
+            if self.otaOperateThread:
+                self.otaOperateThread.quit()
+                if not self.otaOperateThread.wait(2000):
+                    self.otaOperateThread.terminate()
+                    self.otaOperateThread.wait()
+            self.otaOperateWorker = None
+            self.otaOperateThread = None
+        except:
+            pass
 
         if self._tickWorker:
             self._tickWorker.stop()

@@ -65,6 +65,8 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.imgFolder = os.path.join(self.exeTopRoot, 'img')
         self.appPictureFile = os.path.join(self.imgFolder, 'app.png')
         self.bootPictureFile = os.path.join(self.imgFolder, 'boot.png')
+        self.singleCorePictureFile = os.path.join(self.imgFolder, 'all_single_core.png')
+        self.dualCorePictureFile = os.path.join(self.imgFolder, 'all_dual_core.png')
 
         self.mcuDevice = None
         self._initTargetSetupValue()
@@ -113,6 +115,10 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             path = self.appPictureFile
         elif picType == 'boot':
             path = self.bootPictureFile
+        elif picType == 'all_single_core':
+            path = self.singleCorePictureFile
+        elif picType == 'all_dual_core':
+            path = self.dualCorePictureFile
         else:
             pass
         pix = QPixmap(path)
