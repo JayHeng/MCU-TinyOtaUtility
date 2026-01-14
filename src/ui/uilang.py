@@ -18,8 +18,11 @@ kMenuPosition_Help     = 0x5
 
 kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support i.MXRT118x \n" + \
-                      "     2. Support NOR Flash \n\n"
+                      "     1. Support i.MXRT117x \n" + \
+                      "     2. Support i.MXRT118x \n" + \
+                      "     3. Support image making and downloading \n" + \
+                      "     4. Support UART&USB ISP \n" + \
+                      "     5. Support NOR Flash Operation\n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page'],

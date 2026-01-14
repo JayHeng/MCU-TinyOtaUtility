@@ -85,7 +85,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Nor CFG Option0:</string>
+      <string>NOR cfg Option0:</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_norCfgOption0">
@@ -320,7 +320,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Nor CFG Option1:</string>
+      <string>NOR cfg Option1:</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_norCfgOption1">
@@ -863,7 +863,7 @@
       </font>
      </property>
      <property name="text">
-      <string>App Slot0 File</string>
+      <string>Slot0 App File</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_appSlot1File">
@@ -883,7 +883,7 @@
       </font>
      </property>
      <property name="text">
-      <string>App Slot1 File</string>
+      <string>Slot1 App File</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_stage1BlFile">
