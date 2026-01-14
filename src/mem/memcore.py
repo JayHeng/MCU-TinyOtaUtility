@@ -237,7 +237,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
         elif fileType == uidef.kOtaFileType_APP0:
             version = self.getAppVersion(0)
             if version == None:
-                return
+                return False
             shutil.copy(self.appSlot0File, self.appSlot0FileTemp)
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
@@ -247,7 +247,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
         elif fileType == uidef.kOtaFileType_APP1:
             version = self.getAppVersion(1)
             if version == None:
-                return
+                return False
             shutil.copy(self.appSlot1File, self.appSlot1FileTemp)
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
@@ -255,7 +255,8 @@ class tinyOtaMem(runcore.tinyOtaRun):
             crc32 = self.calc_crc32_mpeg2_excluding_word(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32)
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32, crc32)
         else:
-            return
+            return False
+        return True
 
     def downloadOtaFile( self, fileType = 'stage0Bl' ):
         memStart = self.otaMemStart
@@ -272,19 +273,19 @@ class tinyOtaMem(runcore.tinyOtaRun):
             memBinFile = self.appSlot1File
             tempMemFile = self.appSlot1FileTemp
         else:
-            return
+            return False
         if os.path.isfile(memBinFile) and memStart != None:
             memStart = self._convertComMemStart(memStart)
             memEraseUnit = self.convertComMemEraseUnit(self.comMemEraseUnit)
             if memStart % self.comMemWriteUnit:
                 self.popupMsgBox('Start Address should be aligned with 0x%x !' %(self.comMemWriteUnit))
-                return
+                return False
             eraseMemStart = misc.align_down(memStart, memEraseUnit)
             eraseMemEnd = misc.align_up(memStart + os.path.getsize(memBinFile), memEraseUnit)
             status, results, cmdStr = self.blhost.flashEraseRegion(eraseMemStart, eraseMemEnd - eraseMemStart, rundef.kBootDeviceMemId_FlexspiNor)
             if status != boot.status.kStatus_Success:
                 self.popupMsgBox('Failed to erase Flash, error code is %d !' %(status))
-                return
+                return False
             if not os.path.isfile(tempMemFile):
                 shutil.copy(memBinFile, tempMemFile)
             status, results, cmdStr = self.blhost.writeMemory(memStart, tempMemFile, rundef.kBootDeviceMemId_FlexspiNor)
@@ -294,3 +295,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 pass
             if status != boot.status.kStatus_Success:
                 self.popupMsgBox('Failed to download file into Flash, error code is %d, You may forget to erase Flash first!' %(status))
+                return False
+            return True
+        else:
+            return False

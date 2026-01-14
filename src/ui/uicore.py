@@ -605,29 +605,50 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
     def updateOtaOperateStatus( self, operate, state=0 ):
-        if state == 1:
+        if state == 2:
             if operate == uidef.kOtaFileType_S0BL:
-                self.pushButton_downloadS0BL.setStyleSheet("background-color: yellow;")
-                self.pushButton_downloadS0BL.setEnabled(False)
+                self.pushButton_downloadS0BL.setStyleSheet("color: green;background-color: white;")
             elif operate == uidef.kOtaFileType_S1BL:
-                self.pushButton_downloadS1BL.setStyleSheet("background-color: yellow;")
-                self.pushButton_downloadS1BL.setEnabled(False)
+                self.pushButton_downloadS1BL.setStyleSheet("color: green;background-color: white;")
             elif operate == uidef.kOtaFileType_APP0:
-                self.pushButton_downloadAPP0.setStyleSheet("background-color: yellow;")
-                self.pushButton_downloadAPP0.setEnabled(False)
+                self.pushButton_downloadAPP0.setStyleSheet("color: green;background-color: white;")
             elif operate == uidef.kOtaFileType_APP1:
-                self.pushButton_downloadAPP1.setStyleSheet("background-color: yellow;")
-                self.pushButton_downloadAPP1.setEnabled(False)
+                self.pushButton_downloadAPP1.setStyleSheet("color: green;background-color: white;")
             else:
                 pass
-        elif state == 0:
-            self.pushButton_downloadS0BL.setStyleSheet("background-color: white;")
             self.pushButton_downloadS0BL.setEnabled(True)
-            self.pushButton_downloadS1BL.setStyleSheet("background-color: white;")
             self.pushButton_downloadS1BL.setEnabled(True)
-            self.pushButton_downloadAPP0.setStyleSheet("background-color: white;")
             self.pushButton_downloadAPP0.setEnabled(True)
-            self.pushButton_downloadAPP1.setStyleSheet("background-color: white;")
+            self.pushButton_downloadAPP1.setEnabled(True)
+        elif state == 1:
+            if operate == uidef.kOtaFileType_S0BL:
+                self.pushButton_downloadS0BL.setStyleSheet("background-color: yellow;")
+            elif operate == uidef.kOtaFileType_S1BL:
+                self.pushButton_downloadS1BL.setStyleSheet("background-color: yellow;")
+            elif operate == uidef.kOtaFileType_APP0:
+                self.pushButton_downloadAPP0.setStyleSheet("background-color: yellow;")
+            elif operate == uidef.kOtaFileType_APP1:
+                self.pushButton_downloadAPP1.setStyleSheet("background-color: yellow;")
+            else:
+                pass
+            self.pushButton_downloadS0BL.setEnabled(False)
+            self.pushButton_downloadS1BL.setEnabled(False)
+            self.pushButton_downloadAPP0.setEnabled(False)
+            self.pushButton_downloadAPP1.setEnabled(False)
+        elif state == 0:
+            if operate == uidef.kOtaFileType_S0BL:
+                self.pushButton_downloadS0BL.setStyleSheet("color: black;")
+            elif operate == uidef.kOtaFileType_S1BL:
+                self.pushButton_downloadS1BL.setStyleSheet("color: black;")
+            elif operate == uidef.kOtaFileType_APP0:
+                self.pushButton_downloadAPP0.setStyleSheet("color: black;")
+            elif operate == uidef.kOtaFileType_APP1:
+                self.pushButton_downloadAPP1.setStyleSheet("color: black;")
+            else:
+                pass
+            self.pushButton_downloadS0BL.setEnabled(True)
+            self.pushButton_downloadS1BL.setEnabled(True)
+            self.pushButton_downloadAPP0.setEnabled(True)
             self.pushButton_downloadAPP1.setEnabled(True)
         else:
             pass
@@ -644,20 +665,20 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
     def updateOtaMakeStatus( self, operate, state=0 ):
         if state == 1:
             if operate == uidef.kOtaFileType_S1BL:
-                self.pushButton_makeS1BL.setStyleSheet("background-color: green;")
+                self.pushButton_makeS1BL.setStyleSheet("color: green;")
             elif operate == uidef.kOtaFileType_APP0:
-                self.pushButton_makeAPP0.setStyleSheet("background-color: green;")
+                self.pushButton_makeAPP0.setStyleSheet("color: green;")
             elif operate == uidef.kOtaFileType_APP1:
-                self.pushButton_makeAPP1.setStyleSheet("background-color: green;")
+                self.pushButton_makeAPP1.setStyleSheet("color: green;")
             else:
                 pass
         elif state == 0:
             if operate == uidef.kOtaFileType_S1BL:
-                self.pushButton_makeS1BL.setStyleSheet("background-color: white;")
+                self.pushButton_makeS1BL.setStyleSheet("color: black;")
             elif operate == uidef.kOtaFileType_APP0:
-                self.pushButton_makeAPP0.setStyleSheet("background-color: white;")
+                self.pushButton_makeAPP0.setStyleSheet("color: black;")
             elif operate == uidef.kOtaFileType_APP1:
-                self.pushButton_makeAPP1.setStyleSheet("background-color: white;")
+                self.pushButton_makeAPP1.setStyleSheet("color: black;")
             else:
                 pass
         else:

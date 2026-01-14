@@ -252,19 +252,25 @@ class tinyOtaMain(memcore.tinyOtaMem):
 
     def callbackBrowseS0BL( self ):
         self.browseOtaFile(uidef.kOtaFileType_S0BL)
+        self.updateOtaOperateStatus(uidef.kOtaFileType_S0BL, 0)
     def callbackBrowseS1BL( self ):
         self.browseOtaFile(uidef.kOtaFileType_S1BL)
         self.updateOtaMakeStatus(uidef.kOtaFileType_S1BL, 0)
+        self.updateOtaOperateStatus(uidef.kOtaFileType_S1BL, 0)
     def callbackBrowseAPP0( self ):
         self.browseOtaFile(uidef.kOtaFileType_APP0)
         self.updateOtaMakeStatus(uidef.kOtaFileType_APP0, 0)
+        self.updateOtaOperateStatus(uidef.kOtaFileType_APP0, 0)
     def callbackBrowseAPP1( self ):
         self.browseOtaFile(uidef.kOtaFileType_APP1)
         self.updateOtaMakeStatus(uidef.kOtaFileType_APP1, 0)
+        self.updateOtaOperateStatus(uidef.kOtaFileType_APP1, 0)
 
     def _makeOtaFile( self, fileType ):
-        self.updateOtaMakeStatus(fileType, 1)
-        self.makeOtaFile(fileType)
+        if self.makeOtaFile(fileType):
+            self.updateOtaMakeStatus(fileType, 1)
+        else:
+            self.updateOtaMakeStatus(fileType, 0)
 
     def callbackMakeS1BL( self ):
         self.showImagePiture('boot')
@@ -279,8 +285,10 @@ class tinyOtaMain(memcore.tinyOtaMem):
     def _downloadOtaFile( self, fileType ):
         self.getOtaFileStartAddress(fileType)
         self.updateOtaOperateStatus(fileType, 1)
-        self.downloadOtaFile(fileType)
-        self.updateOtaOperateStatus(fileType, 0)
+        if self.downloadOtaFile(fileType):
+            self.updateOtaOperateStatus(fileType, 2)
+        else:
+            self.updateOtaOperateStatus(fileType, 0)
 
     def callbackDownloadS0BL( self ):
         self._downloadOtaFile(uidef.kOtaFileType_S0BL)
