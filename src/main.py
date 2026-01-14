@@ -28,10 +28,10 @@ class memOperateWorker(QObject):
     started  = pyqtSignal()
     finished = pyqtSignal()
 
-    def __init__(self, owner, task_type):
+    def __init__(self, owner, task_file_type):
         super().__init__(None)
         self._owner = owner
-        self._task  = task_type
+        self._task  = task_file_type
         self._stop  = False
 
     def stop(self):
@@ -46,6 +46,8 @@ class memOperateWorker(QObject):
                 self._owner.massEraseXspiFlashMemory()
             elif self._task == uidef.kCommMemOperation_Write:
                 self._owner.writeXspiFlashMemory()
+            else:
+                self._owner.downloadOtaFile(self._task)
             self.finished.emit()
         except Exception as e:
             pass
@@ -61,6 +63,8 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.accessMemType = ''
         self.memOperateThread = None
         self.memOperateWorker = None
+        self.otaOperateThread = None
+        self.otaOperateWorker = None
 
     def _register_callbacks(self):
         self.menuHelpAction_homePage.triggered.connect(self.callbackShowHomePage)
@@ -217,9 +221,9 @@ class tinyOtaMain(memcore.tinyOtaMem):
             self.getUserComMemParameters(False)
             self.updateMemOperateStatus(self.accessMemType, 1)
             self.readXspiFlashMemory()
-            self.updateMemOperateStatus(self.accessMemType, 0),
+            self.updateMemOperateStatus(self.accessMemType, 0)
         else:
-            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
     def callbackEraseMem( self ):
         if self.connectStage == uidef.kConnectStage_Reset:
@@ -248,7 +252,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
             self.updateMemOperateStatus(self.accessMemType, 1)
             self._startMemOperateTask(self.accessMemType)
         else:
-            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotEnterFl'][0])
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
     def callbackBrowseS0BL( self ):
         self.browseOtaFile(uidef.kOtaFileType_S0BL)
@@ -282,22 +286,47 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.showImagePiture('app')
         self._makeOtaFile(uidef.kOtaFileType_APP1)
 
+    def _startDownloadOtaTask( self, fileType ):
+        self.initGauge()
+        self.task_startGauge()
+        self.otaOperateThread = QThread(self)
+        self.otaOperateWorker = memOperateWorker(self, fileType)
+        self.otaOperateWorker.moveToThread(self.otaOperateThread)
+        self.otaOperateThread.started.connect(self.otaOperateWorker.run)
+        self.otaOperateWorker.finished.connect(lambda: (
+            self.updateOtaOperateStatus(fileType, 2),
+            self.deinitGauge(),
+            self.otaOperateThread.quit()
+        ))
+        self.otaOperateWorker.finished.connect(self.otaOperateWorker.deleteLater)
+        self.otaOperateThread.finished.connect(self.otaOperateThread.deleteLater)
+        self.otaOperateThread.start()
+
     def _downloadOtaFile( self, fileType ):
         self.getOtaFileStartAddress(fileType)
         self.updateOtaOperateStatus(fileType, 1)
-        if self.downloadOtaFile(fileType):
-            self.updateOtaOperateStatus(fileType, 2)
-        else:
-            self.updateOtaOperateStatus(fileType, 0)
+        self._startDownloadOtaTask(fileType)
 
     def callbackDownloadS0BL( self ):
-        self._downloadOtaFile(uidef.kOtaFileType_S0BL)
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self._downloadOtaFile(uidef.kOtaFileType_S0BL)
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
     def callbackDownloadS1BL( self ):
-        self._downloadOtaFile(uidef.kOtaFileType_S1BL)
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self._downloadOtaFile(uidef.kOtaFileType_S1BL)
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
     def callbackDownloadAPP0( self ):
-        self._downloadOtaFile(uidef.kOtaFileType_APP0)
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self._downloadOtaFile(uidef.kOtaFileType_APP0)
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
     def callbackDownloadAPP1( self ):
-        self._downloadOtaFile(uidef.kOtaFileType_APP1)
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self._downloadOtaFile(uidef.kOtaFileType_APP1)
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][0])
 
     def _deinitToolToExit( self ):
         self.updateXspiNorOptValue()
@@ -314,6 +343,17 @@ class tinyOtaMain(memcore.tinyOtaMem):
                 self.memOperateThread.wait()
         self.memOperateWorker = None
         self.memOperateThread = None
+
+        if self.otaOperateWorker:
+            self.otaOperateWorker.stop()
+        if self.otaOperateThread:
+            self.otaOperateThread.quit()
+            if not self.otaOperateThread.wait(2000):
+                self.otaOperateThread.terminate()
+                self.otaOperateThread.wait()
+        self.otaOperateWorker = None
+        self.otaOperateThread = None
+
         if self._tickWorker:
             self._tickWorker.stop()
         if self._tickThread:
