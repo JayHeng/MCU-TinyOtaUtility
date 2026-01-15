@@ -94,7 +94,7 @@
        <x>120</x>
        <y>100</y>
        <width>111</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -329,7 +329,7 @@
        <x>120</x>
        <y>130</y>
        <width>111</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -722,7 +722,7 @@
        <x>130</x>
        <y>410</y>
        <width>81</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -738,7 +738,7 @@
        <x>370</x>
        <y>410</y>
        <width>81</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -812,7 +812,7 @@
       <rect>
        <x>110</x>
        <y>40</y>
-       <width>169</width>
+       <width>221</width>
        <height>22</height>
       </rect>
      </property>
@@ -891,7 +891,7 @@
       <rect>
        <x>110</x>
        <y>70</y>
-       <width>169</width>
+       <width>221</width>
        <height>22</height>
       </rect>
      </property>
@@ -910,7 +910,7 @@
       <rect>
        <x>110</x>
        <y>100</y>
-       <width>169</width>
+       <width>221</width>
        <height>22</height>
       </rect>
      </property>
@@ -929,7 +929,7 @@
       <rect>
        <x>110</x>
        <y>130</y>
-       <width>169</width>
+       <width>221</width>
        <height>22</height>
       </rect>
      </property>
@@ -946,7 +946,7 @@
     <widget class="QLabel" name="label_FileStart">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>340</x>
        <y>10</y>
        <width>81</width>
        <height>16</height>
@@ -965,10 +965,10 @@
     <widget class="QLineEdit" name="lineEdit_fileStartS0BL">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>340</x>
        <y>40</y>
        <width>81</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -981,10 +981,10 @@
     <widget class="QLineEdit" name="lineEdit_fileStartS1BL">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>340</x>
        <y>70</y>
        <width>81</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -997,10 +997,10 @@
     <widget class="QLineEdit" name="lineEdit_fileStartAPP0">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>340</x>
        <y>100</y>
        <width>81</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -1013,10 +1013,10 @@
     <widget class="QLineEdit" name="lineEdit_fileStartAPP1">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>340</x>
        <y>130</y>
        <width>81</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -1029,8 +1029,8 @@
     <widget class="QLabel" name="label_imageVersion">
      <property name="geometry">
       <rect>
-       <x>380</x>
-       <y>10</y>
+       <x>430</x>
+       <y>70</y>
        <width>81</width>
        <height>16</height>
       </rect>
@@ -1048,10 +1048,10 @@
     <widget class="QLineEdit" name="lineEdit_app0VerMajor">
      <property name="geometry">
       <rect>
-       <x>390</x>
+       <x>440</x>
        <y>100</y>
        <width>31</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -1064,10 +1064,10 @@
     <widget class="QLineEdit" name="lineEdit_app0VerMinor">
      <property name="geometry">
       <rect>
-       <x>430</x>
+       <x>480</x>
        <y>100</y>
        <width>31</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -1080,8 +1080,8 @@
     <widget class="QLabel" name="label_v0">
      <property name="geometry">
       <rect>
-       <x>380</x>
-       <y>102</y>
+       <x>430</x>
+       <y>103</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1099,8 +1099,8 @@
     <widget class="QLabel" name="label_v1">
      <property name="geometry">
       <rect>
-       <x>380</x>
-       <y>132</y>
+       <x>430</x>
+       <y>133</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1118,10 +1118,10 @@
     <widget class="QLineEdit" name="lineEdit_app1VerMajor">
      <property name="geometry">
       <rect>
-       <x>390</x>
+       <x>440</x>
        <y>130</y>
        <width>31</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -1134,10 +1134,10 @@
     <widget class="QLineEdit" name="lineEdit_app1VerMinor">
      <property name="geometry">
       <rect>
-       <x>430</x>
+       <x>480</x>
        <y>130</y>
        <width>31</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <property name="text">
@@ -1150,8 +1150,8 @@
     <widget class="QLabel" name="label_v1p">
      <property name="geometry">
       <rect>
-       <x>423</x>
-       <y>132</y>
+       <x>473</x>
+       <y>134</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1169,8 +1169,8 @@
     <widget class="QLabel" name="label_v0p">
      <property name="geometry">
       <rect>
-       <x>423</x>
-       <y>102</y>
+       <x>473</x>
+       <y>104</y>
        <width>16</width>
        <height>16</height>
       </rect>
@@ -1188,7 +1188,7 @@
     <widget class="QLabel" name="label_integrity">
      <property name="geometry">
       <rect>
-       <x>480</x>
+       <x>430</x>
        <y>10</y>
        <width>81</width>
        <height>16</height>
@@ -1207,10 +1207,10 @@
     <widget class="QComboBox" name="comboBox_integrity">
      <property name="geometry">
       <rect>
-       <x>470</x>
-       <y>110</y>
-       <width>71</width>
-       <height>28</height>
+       <x>430</x>
+       <y>40</y>
+       <width>81</width>
+       <height>22</height>
       </rect>
      </property>
      <item>
@@ -1222,9 +1222,9 @@
     <widget class="QPushButton" name="pushButton_makeAPP0">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>520</x>
        <y>100</y>
-       <width>51</width>
+       <width>81</width>
        <height>25</height>
       </rect>
      </property>
@@ -1236,15 +1236,15 @@
       </font>
      </property>
      <property name="text">
-      <string>Make</string>
+      <string>Make App0</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_makeAPP1">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>520</x>
        <y>130</y>
-       <width>51</width>
+       <width>81</width>
        <height>25</height>
       </rect>
      </property>
@@ -1256,7 +1256,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Make</string>
+      <string>Make App1</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_downloadAPP0">
@@ -1264,7 +1264,7 @@
       <rect>
        <x>610</x>
        <y>100</y>
-       <width>71</width>
+       <width>101</width>
        <height>25</height>
       </rect>
      </property>
@@ -1276,7 +1276,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Download</string>
+      <string>Download App0</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_downloadAPP1">
@@ -1284,7 +1284,7 @@
       <rect>
        <x>610</x>
        <y>130</y>
-       <width>71</width>
+       <width>101</width>
        <height>25</height>
       </rect>
      </property>
@@ -1296,7 +1296,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Download</string>
+      <string>Download App1</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_downloadS1BL">
@@ -1304,7 +1304,7 @@
       <rect>
        <x>610</x>
        <y>70</y>
-       <width>71</width>
+       <width>101</width>
        <height>25</height>
       </rect>
      </property>
@@ -1316,7 +1316,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Download</string>
+      <string>Download BL1</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_downloadS0BL">
@@ -1324,7 +1324,7 @@
       <rect>
        <x>610</x>
        <y>40</y>
-       <width>71</width>
+       <width>101</width>
        <height>25</height>
       </rect>
      </property>
@@ -1336,15 +1336,15 @@
       </font>
      </property>
      <property name="text">
-      <string>Download</string>
+      <string>Download BL0</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_makeS1BL">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>520</x>
        <y>70</y>
-       <width>51</width>
+       <width>81</width>
        <height>25</height>
       </rect>
      </property>
@@ -1356,7 +1356,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Make</string>
+      <string>Make BL1</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_sourceFilePath">
@@ -1381,9 +1381,9 @@
     <widget class="QPushButton" name="pushButton_allInOne">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>610</x>
        <y>10</y>
-       <width>131</width>
+       <width>101</width>
        <height>25</height>
       </rect>
      </property>
@@ -1426,6 +1426,41 @@
      </property>
      <property name="text">
       <string>Chip Erase</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_appLoadAddr">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>40</y>
+       <width>81</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0x0</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_appLoadAddr">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>10</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>App Load Addr</string>
      </property>
     </widget>
    </widget>

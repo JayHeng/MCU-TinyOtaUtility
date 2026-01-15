@@ -416,6 +416,7 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.lineEdit_fileStartS1BL.setText(self.toolCommDict['fileStartS1BL'])
         self.lineEdit_fileStartAPP0.setText(self.toolCommDict['fileStartAPP0'])
         self.lineEdit_fileStartAPP1.setText(self.toolCommDict['fileStartAPP1'])
+        self.lineEdit_appLoadAddr.setText(self.toolCommDict['appLoadAddr'])
         self.lineEdit_app0VerMajor.setText(self.toolCommDict['app0VersionH'])
         self.lineEdit_app0VerMinor.setText(self.toolCommDict['app0VersionL'])
         self.lineEdit_app1VerMajor.setText(self.toolCommDict['app1VersionH'])
@@ -584,6 +585,14 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         if status:
             self.otaMemStart = val32
+
+    def getAppLoadAddress( self ):
+        self.appLoadAddr = None
+        self.toolCommDict['appLoadAddr'] = self.lineEdit_appLoadAddr.text()
+        status, val32 = self.getVal32FromHexText(self.lineEdit_appLoadAddr.text())
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
+        if status:
+            self.appLoadAddr = val32
         
     def browseOtaFile( self, fileType = 'stage0Bl' ):
         path, _ = QFileDialog.getOpenFileName(

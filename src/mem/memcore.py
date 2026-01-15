@@ -237,11 +237,13 @@ class tinyOtaMem(runcore.tinyOtaRun):
             app0MemStart = self.otaMemStart
             self.getOtaFileStartAddress(uidef.kOtaFileType_APP1)
             app1MemStart = self.otaMemStart
-            if app0MemStart == None or app1MemStart == None:
+            self.getAppLoadAddress()
+            if app0MemStart == None or app1MemStart == None or self.appLoadAddr == None:
                 return False
             shutil.copy(self.stage1BlFile, self.stage1BlFileTemp)
             self.replace_word_in_binary(self.stage1BlFileTemp, memdef.kImageHeaderWordOffset_App0LoadAddr, app0MemStart)
             self.replace_word_in_binary(self.stage1BlFileTemp, memdef.kImageHeaderWordOffset_App1LoadAddr, app1MemStart)
+            self.replace_word_in_binary(self.stage1BlFileTemp, memdef.kImageHeaderWordOffset_AppLoadAddr, self.appLoadAddr)
             self.replace_word_in_binary(self.stage1BlFileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_Boot)
         elif fileType == uidef.kOtaFileType_APP0:
             version = self.getAppVersion(0)
