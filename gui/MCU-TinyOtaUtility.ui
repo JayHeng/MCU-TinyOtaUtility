@@ -1316,7 +1316,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Download BL1</string>
+      <string>Download BL1   </string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_downloadS0BL">
@@ -1336,7 +1336,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Download BL0</string>
+      <string>Download BL0   </string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_makeS1BL">
@@ -1356,7 +1356,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Make BL1</string>
+      <string>Make BL1   </string>
      </property>
     </widget>
     <widget class="QLabel" name="label_sourceFilePath">
