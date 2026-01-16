@@ -67,6 +67,7 @@ class Target(object):
         self.isSipFlexspiNorDevice = misc.get_dict_default(kwargs, 'isSipFlexspiNorDevice', None)
         self.xspiNorCfgInfoOffset = misc.get_dict_default(kwargs, 'xspiNorCfgInfoOffset', None)
         self.xspiNorCfgInfoLen = misc.get_dict_default(kwargs, 'xspiNorCfgInfoLen', None)
+        self.bootImageOffset = misc.get_dict_default(kwargs, 'bootImageOffset', None)
         self.ramFreeSpaceStart_LoadCommOpt = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadCommOpt', None)
 
     ##

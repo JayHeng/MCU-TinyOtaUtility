@@ -59,6 +59,7 @@ xspiNorEraseAlignment = 0x1 # in byte
 isSipFlexspiNorDevice = False
 xspiNorCfgInfoOffset = 0x400
 xspiNorCfgInfoLen    = 0x200
+bootImageOffset = 0x2000
 
 ramFreeSpaceStart_LoadCommOpt        = 0x20202000
 
