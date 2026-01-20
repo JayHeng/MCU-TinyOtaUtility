@@ -22,8 +22,8 @@ kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
                       "     2. Support i.MXRT118x \n" + \
                       "     3. Support NOR Flash R/W/E Operation \n" + \
                       "     4. Support UART&USB ISP via ROM \n" + \
-                      "     5. Support bl image making(solt0,1 app start) and downloading \n" + \
-                      "     6. Support XIP app image making(CRC32, Version) and downloading\n\n"
+                      "     5. Support bootloader image making(slot0,1 app start, Magic) and downloading \n" + \
+                      "     6. Support application image making(Len, CRC32, Version, Magic) and downloading\n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page'],
