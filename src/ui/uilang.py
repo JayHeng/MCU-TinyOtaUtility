@@ -24,6 +24,10 @@ kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
                       "     4. Support UART&USB ISP via ROM \n" + \
                       "     5. Support bootloader image making(slot0,1 app start, Magic) and downloading \n" + \
                       "     6. Support application image making(Len, CRC32, Version, Magic) and downloading\n\n"
+kRevision_1_1_0_en =  "【v1.1.0】 \n" + \
+                      "  Improvement: \n" + \
+                      "     1. Adjust bootloader image header definition(Magic) \n" + \
+                      "     2. Adjust application image header definition(Magic, Version, AuthType, LoadAddr) to align with MCXA1 or RT3digits\n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page'],
@@ -35,6 +39,7 @@ kMsgLanguageContentDict = {
         'aboutAuthor_blog':                   [u"Blog: 痞子衡嵌入式 https://www.cnblogs.com/henjay724/ \n"],
         'revisionHistory_title':              ['Revision History'],
         'revisionHistory_v1_0_0':             [kRevision_1_0_0_en],
+        'revisionHistory_v1_1_0':             [kRevision_1_1_0_en],
 
         'connectError_doubleCheckBmod':       ['Make sure that you have put MCU in UART SDP mode (BMOD[1:0] pins = 2\'b01)!'],
         'connectError_failToJumpToFl':        ['MCU has entered ROM SDP mode but failed to jump to Flashloader, Please reset board and try again!'],

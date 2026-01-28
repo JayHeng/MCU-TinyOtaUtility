@@ -480,12 +480,14 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.showAboutMessage(uilang.kMsgLanguageContentDict['aboutAuthor_title'][0], msgText )
 
     def callbackShowRevisionHistory(self):
-        self.showAboutMessage(uilang.kMsgLanguageContentDict['revisionHistory_title'][0], uilang.kMsgLanguageContentDict['revisionHistory_v1_0_0'][0] )
+        msgText = ((uilang.kMsgLanguageContentDict['revisionHistory_v1_0_0'][0]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v1_1_0'][0]))
+        self.showAboutMessage(uilang.kMsgLanguageContentDict['revisionHistory_title'][0], msgText)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     g_main_win = tinyOtaMain(None)
-    g_main_win.setWindowTitle(u"MCU Tiny OTA Utility v1.0")
+    g_main_win.setWindowTitle(u"MCU Tiny OTA Utility v1.1")
     g_main_win.show()
 
     sys.exit(app.exec_())
