@@ -231,6 +231,12 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 pos = end_pos
         return crc.final()
 
+    def _getImageCrcType( self, loadAddr ):
+        if loadAddr == 0x0:
+            return memdef.kImageAuthType_XipCRC32
+        else:
+            return memdef.kImageAuthType_NonxipCRC32
+
     def makeOtaFile( self, fileType = 'stage1Bl' ):
         if fileType == uidef.kOtaFileType_S1BL:
             self.getOtaFileStartAddress(uidef.kOtaFileType_APP0)
@@ -242,28 +248,36 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 return False
             shutil.copy(self.stage1BlFile, self.stage1BlFileTemp)
             appWordOffsetInBinary = (self.tgt.bootImageOffset - self.tgt.xspiNorCfgInfoOffset) >> 2
+            self.replace_word_in_binary(self.stage1BlFileTemp, appWordOffsetInBinary + memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_Boot)
             self.replace_word_in_binary(self.stage1BlFileTemp, appWordOffsetInBinary + memdef.kImageHeaderWordOffset_App0LoadAddr, app0MemStart)
             self.replace_word_in_binary(self.stage1BlFileTemp, appWordOffsetInBinary + memdef.kImageHeaderWordOffset_App1LoadAddr, app1MemStart)
             self.replace_word_in_binary(self.stage1BlFileTemp, appWordOffsetInBinary + memdef.kImageHeaderWordOffset_AppLoadAddr, self.appLoadAddr)
-            self.replace_word_in_binary(self.stage1BlFileTemp, appWordOffsetInBinary + memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_Boot)
         elif fileType == uidef.kOtaFileType_APP0:
             version = self.getAppVersion(0)
             if version == None:
                 return False
+            self.getAppLoadAddress()
+            if self.appLoadAddr == None:
+                return False
             shutil.copy(self.appSlot0File, self.appSlot0FileTemp)
-            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
-            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_LoadAddr, self.appLoadAddr)
+            self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_AuthType, ((version << 16) + self._getImageCrcType(self.appLoadAddr)))
             crc32 = self.calc_crc32_mpeg2_excluding_word(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32)
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Crc32, crc32)
         elif fileType == uidef.kOtaFileType_APP1:
             version = self.getAppVersion(1)
             if version == None:
                 return False
+            self.getAppLoadAddress()
+            if self.appLoadAddr == None:
+                return False
             shutil.copy(self.appSlot1File, self.appSlot1FileTemp)
-            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
-            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, (((memdef.kImageAuthType_CRC32) << 16) + version))
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_LoadAddr, self.appLoadAddr)
+            self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_AuthType, ((version << 16) + self._getImageCrcType(self.appLoadAddr)))
             crc32 = self.calc_crc32_mpeg2_excluding_word(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32)
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Crc32, crc32)
         else:

@@ -5,12 +5,14 @@ kAppImageFileExtensionList_S19 = ['.srec', '.s19', '.mot', '.mxt', '.m32', '.s28
 kAppImageFileExtensionList_Hex = ['.hex']
 kAppImageFileExtensionList_Bin = ['.bin']
 
-kImageAuthType_CRC32  = 0x0000
+kImageAuthType_NonxipCRC32  = 0x0002
+kImageAuthType_XipCRC32     = 0x0005
 
+kImageHeaderWordOffset_Magic    = 7
 kImageHeaderWordOffset_Length   = 8
 kImageHeaderWordOffset_AuthType = 9
 kImageHeaderWordOffset_Crc32    = 10
-kImageHeaderWordOffset_Magic    = 13
+kImageHeaderWordOffset_LoadAddr = 13
 kImageHeaderMagicWord_App    =0x50504154 #0x54 ('T'), 0x41 ('A'), 0x50 ('P'), 0x50 ('P')
 
 kImageHeaderWordOffset_App0LoadAddr = 8
