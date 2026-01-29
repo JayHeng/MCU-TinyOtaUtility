@@ -111,6 +111,7 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.comboBox_xspiInstance.currentIndexChanged.connect(self.callbackSetXspiInstance)
         self.comboBox_interface.currentIndexChanged.connect(self.callbackSetInterface)
         self.comboBox_blMode.currentIndexChanged.connect(self.callbackSetBlMode)
+        self.comboBox_integrity.currentIndexChanged.connect(self.callbackSetIntegrity)
         self.pushButton_connect.clicked.connect(self.callbackConnectToDevice)
         self.pushButton_read.clicked.connect(self.callbackReadMem)
         self.pushButton_write.clicked.connect(self.callbackWriteMem)
@@ -307,6 +308,17 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.updateOtaMakeStatus(uidef.kOtaFileType_APP1, 0)
         self.updateOtaOperateStatus(uidef.kOtaFileType_APP1, 0)
 
+    def callbackSetIntegrity( self ):
+        self.setIntegrityValue()
+
+    def _showAppImagePicture( self ):
+        if self.integrity == uidef.kIntegrityType_Magic:
+            self.showImagePiture('app_magic')
+        elif self.integrity == uidef.kIntegrityType_CRC32:
+            self.showImagePiture('app_crc32')
+        else:
+            pass
+
     def _makeOtaFile( self, fileType ):
         if self.makeOtaFile(fileType):
             self.updateOtaMakeStatus(fileType, 1)
@@ -317,10 +329,10 @@ class tinyOtaMain(memcore.tinyOtaMem):
         self.showImagePiture('boot')
         self._makeOtaFile(uidef.kOtaFileType_S1BL)
     def callbackMakeAPP0( self ):
-        self.showImagePiture('app')
+        self._showAppImagePicture()
         self._makeOtaFile(uidef.kOtaFileType_APP0)
     def callbackMakeAPP1( self ):
-        self.showImagePiture('app')
+        self._showAppImagePicture()
         self._makeOtaFile(uidef.kOtaFileType_APP1)
 
     def _startDownloadOtaTask( self, fileType ):

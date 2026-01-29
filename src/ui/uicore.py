@@ -63,7 +63,8 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.toolCommDict = toolCommDict.copy()
 
         self.imgFolder = os.path.join(self.exeTopRoot, 'img')
-        self.appPictureFile = os.path.join(self.imgFolder, 'app.png')
+        self.appMagicPictureFile = os.path.join(self.imgFolder, 'app_magic.png')
+        self.appCrc32PictureFile = os.path.join(self.imgFolder, 'app_crc32.png')
         self.bootPictureFile = os.path.join(self.imgFolder, 'boot.png')
         self.singleCorePictureFile = os.path.join(self.imgFolder, 'all_single_core.png')
         self.dualCorePictureFile = os.path.join(self.imgFolder, 'all_dual_core.png')
@@ -109,10 +110,14 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
         self.usbhidToConnect = [None] * 2
         self.blMode = None
         self._initBlModeValue()
+        self.integrity = None
+        self._initIntegrityValue()
 
-    def showImagePiture( self, picType = 'app' ):
-        if picType == 'app':
-            path = self.appPictureFile
+    def showImagePiture( self, picType = 'app_magic' ):
+        if picType == 'app_magic':
+            path = self.appMagicPictureFile
+        elif picType == 'app_crc32':
+            path = self.appCrc32PictureFile
         elif picType == 'boot':
             path = self.bootPictureFile
         elif picType == 'all_single_core':
@@ -722,6 +727,15 @@ class tinyOtaUi(QMainWindow, tinyOtaWin.Ui_tinyOtaWin):
             self.popupMsgBox('Version Major/Minor format error, it should be 0-255')
         uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         return version
+
+    def _initIntegrityValue( self ):
+        self.comboBox_integrity.setCurrentIndex(self.toolCommDict['integrity'])
+        self.setIntegrityValue()
+
+    def setIntegrityValue( self ):
+        self.integrity = self.comboBox_integrity.currentIndex()
+        self.toolCommDict['integrity'] = self.integrity
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
     def printMem( self , memStr ):
         self.textEdit_memWin.append(memStr)

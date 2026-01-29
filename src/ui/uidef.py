@@ -107,3 +107,6 @@ kOtaFileType_S0BL = 'stage0Bl'
 kOtaFileType_S1BL = 'stage1Bl'
 kOtaFileType_APP0 = 'appSlot0'
 kOtaFileType_APP1 = 'appSlot1'
+
+kIntegrityType_Magic = 0
+kIntegrityType_CRC32 = 1

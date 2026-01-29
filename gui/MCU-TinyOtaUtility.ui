@@ -1215,6 +1215,11 @@
      </property>
      <item>
       <property name="text">
+       <string>Magic</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>CRC32</string>
       </property>
      </item>
