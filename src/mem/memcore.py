@@ -13,6 +13,7 @@ from ui import uivar
 from ui import uilang
 from utils import misc
 from typing import Optional
+from typing import Union
 from crccheck.crc import Crc32Mpeg2
 
 class tinyOtaMem(runcore.tinyOtaRun):
@@ -195,6 +196,31 @@ class tinyOtaMem(runcore.tinyOtaRun):
                 if status != boot.status.kStatus_Success:
                     self.popupMsgBox('Failed to write Flash, error code is %d, You may forget to erase Flash first!' %(status))
 
+
+    def _parse_byte_pattern(self, bytePattern: Union[bytes, bytearray]) -> bytes:
+        if not isinstance(bytePattern, (bytes, bytearray)):
+            return None
+        pattern = bytes(bytePattern)
+        if len(pattern) == 0:
+            return None
+        return pattern
+
+    def pad_file_to_4byte_alignment(self, file_path: str,
+                                   bytePattern: Union[bytes, bytearray]) -> int:
+        pattern = self._parse_byte_pattern(bytePattern)
+        if pattern == None:
+            return 0
+        size = os.path.getsize(file_path)
+        remainder = size % 4
+        if remainder == 0:
+            return 0
+        need = 4 - remainder
+        times = (need + len(pattern) - 1) // len(pattern)
+        padding = (pattern * times)[:need]
+        with open(file_path, "ab") as f:
+            f.write(padding)
+        return need
+
     def calc_crc32_mpeg2_excluding_word(self, path: str, offset: int, chunk_size: int = 64 * 1024) -> int:
         try:
             file_size = os.path.getsize(path)
@@ -260,6 +286,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
             if self.appLoadAddr == None:
                 return False
             shutil.copy(self.appSlot0File, self.appSlot0FileTemp)
+            self.pad_file_to_4byte_alignment(self.appSlot0FileTemp, b"\xFF")
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot0FileTemp))
             self.replace_word_in_binary(self.appSlot0FileTemp, memdef.kImageHeaderWordOffset_LoadAddr, self.appLoadAddr)
@@ -274,6 +301,7 @@ class tinyOtaMem(runcore.tinyOtaRun):
             if self.appLoadAddr == None:
                 return False
             shutil.copy(self.appSlot1File, self.appSlot1FileTemp)
+            self.pad_file_to_4byte_alignment(self.appSlot1FileTemp, b"\xFF")
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Magic, memdef.kImageHeaderMagicWord_App)
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_Length, os.path.getsize(self.appSlot1FileTemp))
             self.replace_word_in_binary(self.appSlot1FileTemp, memdef.kImageHeaderWordOffset_LoadAddr, self.appLoadAddr)

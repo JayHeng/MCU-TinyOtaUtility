@@ -26,8 +26,9 @@ kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
                       "     6. Support application image making(Len, CRC32, Version, Magic) and downloading\n\n"
 kRevision_1_1_0_en =  "【v1.1.0】 \n" + \
                       "  Improvement: \n" + \
-                      "     1. Adjust bootloader image header definition(Magic) \n" + \
-                      "     2. Adjust application image header definition(Magic, Version, AuthType, LoadAddr) to align with MCXA1 or RT3digits\n\n"
+                      "     1. Pad application image file length to 4B alignment for CRC32 calculation \n" + \
+                      "     2. Adjust bootloader image header definition(Magic) \n" + \
+                      "     3. Adjust application image header definition(Magic, Version, AuthType, LoadAddr) to align with MCXA1 or RT3digits\n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page'],
