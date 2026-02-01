@@ -19,7 +19,7 @@ Tiny OTA 工具：
 3. 支持NOR Flash一般读写擦操作
 4. 支持UART&USB blhost协议与MCU ROM通信
 5. 支持bootloader程序加头(slot0,1 app start, Magic)与下载
-6. 支持application程序加头(Len, CRC32, Version, Magic)与下载
+6. 支持application程序加头(Len, AuthType, Version, AuthRes, LoadAddr)与下载
 ```
 
 Tiny OTA 固件：
@@ -52,9 +52,9 @@ define symbol m_text_start             = m_flash_start + app_image_offset;
 
 ![](./doc/v1.0/rt1180_tota_app_proj.png)
 
-　　有了 tota_app_cm33.bin 之后，后续再通过 MCU-TinyOtaUtility 工具加上 OTA 头（包含 Length、CRC32、Version、Magic）并将其烧写到 Flash Slot0 或者 Slot1 位置（注意 Slot 0 对应偏移应与 app_image_offset 一致），OTA 信息位置复用了 ARM Vector Table 里保留的如下几个 Vector。  
+　　有了 tota_app_cm33.bin 之后，后续再通过 MCU-TinyOtaUtility 工具加上 OTA 头（包含 Len, AuthType, Version, AuthRes, LoadAddr）并将其烧写到 Flash Slot0 或者 Slot1 位置（注意 Slot 0 对应偏移应与 app_image_offset 一致），OTA 信息位置复用了 ARM Vector Table 里保留的如下几个 Vector。这里的 app load addr 参数功能暂时还未实现，后续可用于拓展支持灵活的 application 加载地址配置。  
 
-![](./doc/v1.0/app_image_header.png)
+![](./doc/v1.1/app_image_header.png)
 
 #### 2.2 tota_sbl
 　　使用 IAR 打开 \imxrt-tiny-ota-fw\targets\imxrt1180\apps\tota_sbl\cm33 工程（基于SDK flashloader 工程，但是对工程做了一些改动，增加了 ROM boot header，链接文件也从 RAM target 改成了标准 XIP target，此外还使能了黑科技，即利用 IDE 特性将除了 init_data_bss 代码之外的 RO 段全部搬移到 RAM 执行，这样方便运行后续因 application 搬移需要的 Flash 擦写操作），当前在其链接文件里设定 ARM 程序起始地址在 FlexSPI1 Flash 的 0x2800B000 处，编译生成 tota_sbl_cm33.bin（注意 bin 起始地址是 0x28000400，因为包含 fcb 等启动头），一般来说我们无需修改 tota_sbl 工程链接文件。  
@@ -74,9 +74,9 @@ define symbol m_interrupts_ram_start   = 0x304A0000;
 
 ![](./doc/v1.0/rt1180_tota_sbl_proj.png)
 
-　　有了 tota_sbl_cm33.bin 之后，后续再通过 MCU-TinyOtaUtility 工具加上 OTA 头（包含 slot0,1 app start, Magic）并将其烧写到 Flash 起始位置（从 fcb 位置开始），OTA 信息位置依然复用了 ARM Vector Table 里保留的如下几个 Vector。这里的 app load addr 参数功能暂时还未实现，后续可用于拓展支持灵活的 application 加载地址配置。  
+　　有了 tota_sbl_cm33.bin 之后，后续再通过 MCU-TinyOtaUtility 工具加上 OTA 头（包含 slot0,1 app start, Magic）并将其烧写到 Flash 起始位置（从 fcb 位置开始），OTA 信息位置依然复用了 ARM Vector Table 里保留的如下几个 Vector。  
 
-![](./doc/v1.0/sbl_image_header.png)
+![](./doc/v1.1/sbl_image_header.png)
 
 　　当 Flash Slot 0,1 处分别有了可用的 application，为了调试方便，我们也可以直接手动修改 tota_sbl 工程的 startup 文件里的如下参数值，这样可以直接在线下载调试 tota_sbl 工程，无需通过上位机工具来添加 OTA 头以及烧写。  
 
