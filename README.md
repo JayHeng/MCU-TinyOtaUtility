@@ -97,7 +97,7 @@ define symbol m_interrupts_ram_start   = 0x304A0000;
 ### 三、PC端GUI工具
 
 ```text
-工具地址 https://github.com/JayHeng/MCU-TinyOtaUtility/archive/refs/tags/v1.0.zip
+工具地址 https://github.com/JayHeng/MCU-TinyOtaUtility/archive/refs/tags/v1.1.zip
 ```
 
 #### 3.1 建立连接
