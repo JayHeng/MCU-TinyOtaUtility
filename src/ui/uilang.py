@@ -16,7 +16,7 @@ kMenuPosition_Tools    = 0x3
 kMenuPosition_Window   = 0x4
 kMenuPosition_Help     = 0x5
 
-kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
+kRevision_1_0_0_en =  "【v1.0.0】 - 2026.01\n" + \
                       "  Feature: \n" + \
                       "     1. Support i.MXRT117x \n" + \
                       "     2. Support i.MXRT118x \n" + \
@@ -24,12 +24,26 @@ kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
                       "     4. Support UART&USB ISP via ROM \n" + \
                       "     5. Support bootloader image making(slot0,1 app start, Magic) and downloading \n" + \
                       "     6. Support application image making(Len, CRC32, Version, Magic) and downloading\n\n"
-kRevision_1_1_0_en =  "【v1.1.0】 \n" + \
+kRevision_1_0_0_zh = u"【v1.0.0】 - 2026.01\n" + \
+                     u"  特性: \n" + \
+                     u"     1. 支持i.MXRT117x \n" + \
+                     u"     2. 支持i.MXRT118x \n" + \
+                     u"     3. 支持对NOR Flash的一般读写擦操作 \n" + \
+                     u"     4. 支持UART和USB-HID两种ROM ISP升级方式（COM端口/USB设备自动识别） \n" + \
+                     u"     5. 支持bootloader程序的头生成（添加slot0,1程序起始地址, 魔数）和下载 \n" + \
+                     u"     6. 支持application程序的头生成（添加长度、CRC32、版本、魔数）和下载 \n\n"
+kRevision_1_1_0_en =  "【v1.1.0】 - 2026.02\n" + \
                       "  Improvement: \n" + \
                       "     1. Set Magic as one of auth type for application image making\n" + \
                       "     2. Pad application image file length to 4B alignment for CRC32 calculation \n" + \
                       "     3. Adjust bootloader image header definition(Magic) \n" + \
                       "     4. Adjust application image header definition(Version, AuthType, LoadAddr) to align with MCXA1 or RT3digits\n\n"
+kRevision_1_1_0_zh = u"【v1.1.0】 - 2026.02\n" + \
+                     u"  改进: \n" + \
+                     u"     1. 将魔数改为APP校验选项之一 \n" + \
+                     u"     2. 将application文件数据用0补齐到4字节对齐以计算CRC32 \n" + \
+                     u"     3. 调整bootloader头里的魔数位置 \n" + \
+                     u"     4. 调整application头里的版本、校验类型、加载地址位置，与MCXA1/RT3位数启动头一致 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page'],
