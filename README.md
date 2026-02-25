@@ -30,7 +30,7 @@ Tiny OTA 固件：
 4. 支持主核示例程序（对于双核MCU而言）
 4. BL: 仅支持FlexSPI1 XIP application程序管理 (永远从slot 0位置启动)
 5. BL: 支持CRC32-MPEG2校验以判断application完整性
-6. BL: 复用软件reliable update流程(来自于Kinetis Bootloader)
+6. BL: 复用软件可靠升级流程(来自于Kinetis Bootloader)
 7. BL: 5秒超时内通过UART&USB blhost与上位机通信，否则跳转进application执行
 ```
 
