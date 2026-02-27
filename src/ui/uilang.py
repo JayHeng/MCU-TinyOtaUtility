@@ -34,16 +34,16 @@ kRevision_1_0_0_zh = u"【v1.0.0】 - 2026.01\n" + \
                      u"     6. 支持application程序加头(Len, CRC32, Version, Magic)与下载 \n\n"
 kRevision_1_1_0_en =  "【v1.1.0】 - 2026.02\n" + \
                       "  Improvement: \n" + \
-                      "     1. Set Magic as one of auth type for application image making\n" + \
-                      "     2. Pad application image file length to 4B alignment for CRC32 calculation \n" + \
-                      "     3. Adjust bootloader image header definition(Magic) \n" + \
-                      "     4. Adjust application image header definition(Version, AuthType, LoadAddr) to align with MCXA1 or RT3digits\n\n"
+                      "     1. Adjust bootloader image header definition(Magic) \n" + \
+                      "     2. Adjust application image header definition(Version, AuthType, LoadAddr) to align with MCXA1 or RT3digits \n" + \
+                      "     3. Set Magic as one of auth type for application image making\n" + \
+                      "     4. Pad application image file length to 4B alignment for CRC32 calculation \n\n"
 kRevision_1_1_0_zh = u"【v1.1.0】 - 2026.02\n" + \
                      u"  改进: \n" + \
-                     u"     1. 将Magic改为application校验选项之一 \n" + \
-                     u"     2. 将application文件数据用0补齐到4字节对齐以计算CRC32 \n" + \
-                     u"     3. 调整bootloader头里的Magic位置 \n" + \
-                     u"     4. 调整application头里的Version、AuthType、LoadAddr位置，与MCXA1/RT3位数启动头一致 \n\n"
+                     u"     1. 调整bootloader头里的Magic位置 \n" + \
+                     u"     2. 调整application头里的Version、AuthType、LoadAddr位置，与MCXA1/RT3位数启动头一致 \n" + \
+                     u"     3. 将Magic改为application校验选项之一 \n" + \
+                     u"     4. 将application文件数据用0补齐到4字节对齐以计算CRC32 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page'],
