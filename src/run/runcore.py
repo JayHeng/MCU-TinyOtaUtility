@@ -9,6 +9,7 @@
 import sys
 import os
 import array
+import time
 from . import rundef
 sys.path.append(os.path.abspath(".."))
 import boot
@@ -269,6 +270,16 @@ class tinyOtaRun(uicore.tinyOtaUi):
     def getMcuDeviceInfoViaFlashloader( self ):
         self.printDeviceStatus("--------MCU Flashloader Info---------")
         self.getMcuDeviceBootloaderVersion()
+        #start = time.perf_counter_ns()
+        #status, results, cmdStr = self.blhost.efuseReadOnce(0x30)
+        #end = time.perf_counter_ns()
+        #elapsed = end - start
+        #print(f"读Fuse Word耗时={elapsed} ns")
+        #start = time.perf_counter_ns()
+        #status, results, cmdStr = self.blhost.efuseProgramOnce(0x30, 'FFFFFFFF')
+        #end = time.perf_counter_ns()
+        #elapsed = end - start
+        #print(f"写Fuse Word耗时={elapsed} ns")
 
     def updateXspiNorMemBase( self ):
         if self.xspiInstance == 0:
